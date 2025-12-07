@@ -1,3 +1,6 @@
+#ifndef GAME_H
+#define GAME_H
+
 #include <time.h>
 
 typedef struct GameState{
@@ -12,3 +15,5 @@ typedef struct SaveNode {
     GameState state;
     struct SaveNode *next;
 } SaveNode;
+
+#endif
