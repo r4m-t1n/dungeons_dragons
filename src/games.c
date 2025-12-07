@@ -1,12 +1,11 @@
-#include <stdio.h>
+#include <time.h>
 
 typedef struct GameState{
-    int time;
-    int life;
-    int coins;
-    int items;
-    int completed_m;
-    struct GameState *last_saved;
+    time_t time;
+    unsigned int life;
+    unsigned int coins;
+    unsigned int items;
+    unsigned int completed_m;
 } GameState;
 
 typedef struct SaveNode {
