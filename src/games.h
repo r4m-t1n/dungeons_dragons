@@ -35,7 +35,7 @@ typedef struct Enemy{
 } Enemy;
 
 enum GameMissions{
-    ROTTING_SWAMP,
+    ROTTING_SWAMP = 1,
     HAUNTED_MANSION,
     CRYSTAL_CAVE,
     DARK_LORDS_CASTLE
