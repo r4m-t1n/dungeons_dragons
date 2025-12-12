@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
-#include "games.c"
+#include "games.h"
 
-void start_game(GameState **game, SaveNode **saved_games_list){
+extern SaveNode *saved_games;
+
+void start_game(GameState **game){
     printf(
         "Village Menu :\n\n"
             "\t1. Start a mission\n"
@@ -31,7 +33,7 @@ void start_game(GameState **game, SaveNode **saved_games_list){
         break;
 
     case 4:
-        save_game(&game, &saved_games_list);
+        save_game(&game);
         break;
 
     case 5:
@@ -75,7 +77,7 @@ int inventory(){
 
 }
 
-void add_save(GameState *current_game, SaveNode **saved_games_list) {
+void add_save(GameState *current_game) {
     SaveNode *new_node = malloc(sizeof(SaveNode));
     if (new_node == NULL) {
         printf("ERROR: Can't allocate memory.\n");
@@ -83,14 +85,21 @@ void add_save(GameState *current_game, SaveNode **saved_games_list) {
     }
     new_node->state = *current_game;
     new_node->state.time = time(NULL);
-    new_node->next = *saved_games_list;
-    *saved_games_list = new_node;
+    new_node->next = NULL;
+
+    SaveNode *last_node = search_game(-1);
+    if (last_node == NULL){
+        saved_games = new_node;
+    }
+    else{
+        last_node->next = new_node;
+    }
     printf("Game Saved Successfully!\n");
 }
 
-void save_game(GameState *current_game, SaveNode **saved_games_list){
+void save_game(GameState *current_game){
     current_game->time = time(NULL);
-    add_save(current_game, saved_games_list);
+    add_save(current_game);
 }
 
 int exit_game(){
