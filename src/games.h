@@ -18,6 +18,7 @@ typedef struct SaveNode {
 } SaveNode;
 
 SaveNode *search_game(int num);
+void print_saved_games(void);
 
 enum RoomTypes{
     FIGHT,
