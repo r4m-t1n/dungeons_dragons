@@ -12,7 +12,12 @@
 extern SaveNode *saved_games;
 
 void create_new_game(){
-    GameState new_game = {
+    GameState *new_game = malloc(sizeof(GameState));
+    if (!new_game){
+        printf("ERROR: Can't allocate memory.\n");
+        return;
+    }
+    *new_game = (GameState){
         .time = DEFAULT_TIME,
         .life = DEFAULT_LIFE_POINT,
         .coins = DEFAULT_COINS,
