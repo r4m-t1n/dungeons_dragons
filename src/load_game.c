@@ -6,36 +6,21 @@
 extern SaveNode *saved_games;
 
 void load_game(void){
-    {
-        printf("Saved Games :\n\n");
-        SaveNode *current = saved_games;
-        if (current == NULL){
-            printf("No saved game found.");
-            return;
-        }
-        int c = 1;
-        while (current != NULL){
-            char time[20];
-            strftime(time, 20, "%d-%m-%Y %H:%M:%S", localtime(&current->state.time));
+    print_saved_games();
 
-            int count_missions = 0;
-            for (int i=0; i<4; i++){
-                if (current->state.completed_m[i] == 0) break;
-                count_missions++;
-            }
+    int selected_game;
+    scanf("%d", &selected_game);
 
-            printf(
-                "%d. %s, %d L. POINTS, %d COINS, %d ITEMS, %d COMPLETED MISSIONS",
-                c, time, current->state.life, current->state.coins,
-                current->state.items, count_missions
-            );
-            current = current->next;
-            c++;
+    SaveNode *saved_game = search_game(selected_game);
 
-        }
-        printf("Select a game [1 - %d]:", c);
+    GameState *current_game = malloc(sizeof(GameState));
+
+    if (!current_game){
+        printf("ERROR: Can't allocate memory.\n");
+        return;
     }
-    
-    //int load_game_info[4] = {a.life, a.coin, a.items, a.completed_m};
-    // start_game(*load_game_info);
+
+    *current_game = saved_game->state;
+
+    start_game(current_game);
 }
