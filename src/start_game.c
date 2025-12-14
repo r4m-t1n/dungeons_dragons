@@ -6,7 +6,7 @@
 
 extern SaveNode *saved_games;
 
-void start_game(GameState **game){
+void start_game(GameState *game){
     printf(
         "Village Menu :\n\n"
             "\t1. Start a mission\n"
@@ -21,11 +21,11 @@ void start_game(GameState **game){
     switch (input)
     {
     case 1:
-        start_mission(&game);
+        start_mission(game);
         break;
 
     case 2:
-        rest(&game);
+        rest(game);
         break;
 
     case 3:
@@ -33,7 +33,7 @@ void start_game(GameState **game){
         break;
 
     case 4:
-        save_game(&game);
+        save_game(game);
         break;
 
     case 5:
@@ -45,7 +45,7 @@ void start_game(GameState **game){
     }
 }
 
-int start_mission(){
+int start_mission(GameState *game){
     printf(
         "Mission Selection Menu :\n\n"
             "\t1. Rotting Swamp\n"
@@ -58,7 +58,7 @@ int start_mission(){
     return input;
 }
 
-void rest(GameState **game){
+void rest(GameState *game){
     char *text = "Let's Rest...   Restoring Life Points...";
     int c = 0;
     printf("\n");
@@ -68,7 +68,7 @@ void rest(GameState **game){
         usleep(0.2 * 1000 * 1000);
         c++;
     }
-    (*game)->life = 20;
+    game->life = 20;
     printf("\nLife Points Restored to 20!\n");
     sleep(1);
 }
