@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
+#include <string.h>
 #include "games.h"
 
 extern SaveNode *saved_games;
@@ -102,6 +103,19 @@ void save_game(GameState *current_game){
     add_save(current_game);
 }
 
-int exit_game(){
-
+void exit_game(){
+    printf("You are exiting the game, remember to save the game so as not to lose your progress.");
+    char input[8];
+    while (1){
+        printf("\nAre you sure to proceed? [Yes/No]\n");
+        scanf("%7s", input);
+        if (strcmp(input, "Yes") == 0){
+            main_menu();
+            return;
+        } else if (strcmp(input, "No") == 0){
+            return;
+        } else {
+            printf("\nInvalid input.");
+        }
+    }
 }
