@@ -25,7 +25,7 @@ void print_saved_games(void){
             printf(
                 "%d. %s, %d L. POINTS, %d COINS, %d ITEMS, %d COMPLETED MISSIONS",
                 c, time, current->state.life, current->state.coins,
-                current->state.items, count_missions
+                total_items(current), count_missions
             );
             current = current->next;
             c++;
@@ -58,4 +58,8 @@ SaveNode *search_game(int num){
         }
     }
     return NULL;
+}
+
+int total_items(GameState *game){
+    return game->potions + game->extra_sword + game->lower_armor;
 }

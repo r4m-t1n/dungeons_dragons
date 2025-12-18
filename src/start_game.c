@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
+#include <string.h>
 #include "games.h"
 
 extern SaveNode *saved_games;
@@ -37,7 +38,7 @@ void start_game(GameState *game){
         break;
 
     case 5:
-        // exit_game();
+        exit_game(game);
         break;
 
     default:
@@ -73,8 +74,16 @@ void rest(GameState *game){
     sleep(1);
 }
 
-int inventory(){
-
+int inventory(GameState *game){
+    printf(
+        "\nYour Stats:"
+            "\n\tLife Points: %d"
+            "\n\tCoins: %d"
+            "\n\tPotions: %d"
+            "\n\tExtra Sword Damage: %d"
+            "\n\t Lower Armor Damage: -%d",
+        game->life, game->coins, game->potions, game->extra_sword, game->lower_armor
+    );
 }
 
 void add_save(GameState *current_game) {
@@ -102,6 +111,20 @@ void save_game(GameState *current_game){
     add_save(current_game);
 }
 
-int exit_game(){
-
+void exit_game(GameState *game){
+    printf("You are exiting the game, remember to save the game so as not to lose your progress.");
+    char input[8];
+    while (1){
+        printf("\nAre you sure to proceed? [Yes/No]\n");
+        scanf("%7s", input);
+        if (strcmp(input, "Yes") == 0){
+            free(game);
+            main_menu();
+            return;
+        } else if (strcmp(input, "No") == 0){
+            return;
+        } else {
+            printf("\nInvalid input.");
+        }
+    }
 }

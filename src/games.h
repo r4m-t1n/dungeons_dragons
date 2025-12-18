@@ -2,13 +2,16 @@
 #define GAME_H
 
 #include <time.h>
+#include <stdbool.h>
 
 typedef struct GameState{
     time_t time;
     unsigned int life;
     int coins;
-    unsigned int items;
-    unsigned int has_key:1;
+    unsigned int potions;
+    unsigned short extra_sword;
+    unsigned short lower_armor;
+    bool has_key;
     unsigned int completed_m[4];
 } GameState;
 
