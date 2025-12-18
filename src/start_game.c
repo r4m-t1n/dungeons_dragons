@@ -74,8 +74,16 @@ void rest(GameState *game){
     sleep(1);
 }
 
-int inventory(){
-
+int inventory(GameState *game){
+    printf(
+        "\nYour Stats:"
+            "\n\tLife Points: %d"
+            "\n\tCoins: %d"
+            "\n\tPotions: %d"
+            "\n\tExtra Sword Damage: %d"
+            "\n\t Lower Armor Damage: -%d",
+        game->life, game->coins, game->potions, game->extra_sword, game->lower_armor
+    );
 }
 
 void add_save(GameState *current_game) {
