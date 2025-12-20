@@ -20,6 +20,10 @@ typedef struct SaveNode {
     struct SaveNode *next;
 } SaveNode;
 
+void main_menu(void);
+void save_game(GameState *current_game);
+void exit_game(GameState *game);
+
 SaveNode *search_game(int num);
 void print_saved_games(void);
 

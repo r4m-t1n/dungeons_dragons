@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "games.h"
+#include "start_game.c"
 
 #define DEFAULT_TIME 0
 #define DEFAULT_LIFE_POINT 20

@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "new_game.c"
+// #include "load_game.c"
+// #include "cheats.c"
 
 #define DEFAULT_KONAMI "wwssadadba "
 
@@ -24,49 +27,46 @@ void print_menu(int cheats_enabled){
 }
 
 void main_menu(void){
-    char input;
-    int idx = 0;
+    char user_input;
+    int char_index = 0;
     short cheats_enabled = 0;
 
     print_menu(cheats_enabled);
 
     while (1){
-        scanf(" %c", &input);
-        switch (input)
+        scanf(" %c", &user_input);
+        switch (user_input)
         {
             case '1':
                 create_new_game();
                 break;
-
             case '2':
-                load_game();
+                // load_game();
                 break;
-            
             case '3':
                 if (cheats_enabled){
-                    cheats_menu();
+                    // cheats_menu();
                 }
                 break;
-
             default:
-                cheats_enabled = detect_konami(input, &idx);
+                // cheats_enabled = detect_konami(user_input, &char_index);
+                print_menu(cheats_enabled);
                 break;
         }
-        print_menu(cheats_enabled);
     }
 }
 
-int detect_konami(char code, int *idx){
+int detect_konami(char code, int *char_index){
 
     const char *konami = DEFAULT_KONAMI;
 
-    if (code != konami[*idx]){
-        *idx = 0;
+    if (code != konami[*char_index]){
+        *char_index = 0;
         return 0;
     }
-    (*idx)++;
-    if (*idx == strlen(konami)){
-        *idx = 0;
+    (*char_index)++;
+    if (*char_index == strlen(konami)){
+        *char_index = 0;
         return 1;
     }
     return 0;

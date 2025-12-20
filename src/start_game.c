@@ -7,7 +7,7 @@
 
 extern SaveNode *saved_games;
 
-void start_game(GameState *game){
+void display_village_menu(){
     printf(
         "Village Menu :\n\n"
             "\t1. Start a mission\n"
@@ -15,76 +15,77 @@ void start_game(GameState *game){
             "\t3. Inventory\n"
             "\t4. Save the game\n"
             "\t5. Exit\n"
-        "Choose an action [1 -5]:"
+        "Choose an action [1 -5]: "
     );
-    int input;
-    scanf("%d", &input);
-    switch (input)
+}
+
+void start_game(GameState *game){
+    display_village_menu();
+
+    int user_input;
+    scanf("%d", &user_input);
+    switch (user_input)
     {
     case 1:
-        start_mission(game);
+        // start_mission(game);
         break;
-
     case 2:
-        rest(game);
+        // rest(game);
         break;
-
     case 3:
         // inventory();
         break;
-
     case 4:
         save_game(game);
         break;
-
     case 5:
         exit_game(game);
         break;
-
     default:
+        display_village_menu();
         break;
     }
 }
 
-int start_mission(GameState *game){
-    printf(
-        "Mission Selection Menu :\n\n"
-            "\t1. Rotting Swamp\n"
-            "\t2. Haunted Mansion\n"
-            "\t3. Crystal Cave\n"
-        "Choose an action [1 -3]: "
-    );
-    int input;
-    scanf("%d", &input);
-    return input;
-}
+// int start_mission(GameState *game){
+//     printf(
+//         "Mission Selection Menu :\n\n"
+//             "\t1. Rotting Swamp\n"
+//             "\t2. Haunted Mansion\n"
+//             "\t3. Crystal Cave\n"
+//         "Choose an action [1 -3]: "
+//     );
+//     int input;
+//     scanf("%d", &input);
+//     return input;
+// }
 
-void rest(GameState *game){
-    char *text = "Let's Rest...   Restoring Life Points...";
-    int c = 0;
-    printf("\n");
-    while (text[c] != '\0'){
-        printf("%c", text[c]);
-        fflush(stdout);
-        usleep(0.2 * 1000 * 1000);
-        c++;
-    }
-    game->life = 20;
-    printf("\nLife Points Restored to 20!\n");
-    sleep(1);
-}
+// void rest(GameState *game){
+//     char *text = "Let's Rest...   Restoring Life Points...";
+//     int c = 0;
+//     printf("\n");
+//     while (text[c] != '\0'){
+//         printf("%c", text[c]);
+//         fflush(stdout);
+//         usleep(0.2 * 1000 * 1000);
+//         c++;
+//     }
+//     game->life = 20;
+//     printf("\nLife Points Restored to 20!\n");
+//     sleep(1);
+// }
 
-int inventory(GameState *game){
-    printf(
-        "\nYour Stats:"
-            "\n\tLife Points: %d"
-            "\n\tCoins: %d"
-            "\n\tPotions: %d"
-            "\n\tExtra Sword Damage: %d"
-            "\n\t Lower Armor Damage: -%d",
-        game->life, game->coins, game->potions, game->extra_sword, game->lower_armor
-    );
-}
+// int inventory(GameState *game){
+//     printf(
+//         "\nYour Stats:"
+//             "\n\tLife Points: %d"
+//             "\n\tCoins: %d"
+//             "\n\tPotions: %d"
+//             "\n\tExtra Sword Damage: %d"
+//             "\n\t Lower Armor Damage: -%d",
+//         game->life, game->coins, game->potions, game->extra_sword, game->lower_armor
+//     );
+// }
 
 void add_save(GameState *current_game) {
     SaveNode *new_node = malloc(sizeof(SaveNode));
@@ -104,6 +105,7 @@ void add_save(GameState *current_game) {
         last_node->next = new_node;
     }
     printf("Game Saved Successfully!\n");
+    start_game(current_game);
 }
 
 void save_game(GameState *current_game){
@@ -122,9 +124,12 @@ void exit_game(GameState *game){
             main_menu();
             return;
         } else if (strcmp(input, "No") == 0){
+            start_game(game);
             return;
         } else {
-            printf("\nInvalid input.");
+            printf("\nInvalid input\n.");
+            start_game(game);
+            return;
         }
     }
 }
