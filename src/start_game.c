@@ -14,7 +14,7 @@ void display_village_menu(){
             "\t2. Rest\n"
             "\t3. Inventory\n"
             "\t4. Save the game\n"
-            "\t5. Exit\n"
+            "\t5. Exit\n\n"
         "Choose an action [1 -5]: "
     );
 }
@@ -30,10 +30,10 @@ void start_game(GameState *game){
         // start_mission(game);
         break;
     case 2:
-        // rest(game);
+        quick_rest(game);
         break;
     case 3:
-        // inventory();
+        display_inventory(game);
         break;
     case 4:
         save_game(game);
@@ -60,32 +60,40 @@ void start_game(GameState *game){
 //     return input;
 // }
 
-// void rest(GameState *game){
-//     char *text = "Let's Rest...   Restoring Life Points...";
-//     int c = 0;
-//     printf("\n");
-//     while (text[c] != '\0'){
-//         printf("%c", text[c]);
-//         fflush(stdout);
-//         usleep(0.2 * 1000 * 1000);
-//         c++;
-//     }
-//     game->life = 20;
-//     printf("\nLife Points Restored to 20!\n");
-//     sleep(1);
-// }
+void quick_rest(GameState *game){
+    if( game->life != 20 ){
+        char *text = "Let's Rest...   Restoring Life Points...";
+        int c = 0;
+        printf("\n");
+        while (text[c] != '\0'){
+            printf("%c", text[c]);
+            fflush(stdout);
+            usleep(0.2 * 1000 * 1000);
+            c++;
+        }
+        game->life = 20;
+        printf("\nLife Points Restored to 20!\n");
+        sleep(1);
+    } else{
+        printf("\nYour life points are full!\n\n");
+    }
 
-// int inventory(GameState *game){
-//     printf(
-//         "\nYour Stats:"
-//             "\n\tLife Points: %d"
-//             "\n\tCoins: %d"
-//             "\n\tPotions: %d"
-//             "\n\tExtra Sword Damage: %d"
-//             "\n\t Lower Armor Damage: -%d",
-//         game->life, game->coins, game->potions, game->extra_sword, game->lower_armor
-//     );
-// }
+    start_game(game);
+}
+
+void display_inventory(GameState *game){
+    printf(
+        "\nYour Stats:"
+            "\n\tLife Points: %d"
+            "\n\tCoins: %d"
+            "\n\tPotions: %d"
+            "\n\tExtra Sword Damage: %d"
+            "\n\tLower Armor Damage: %d\n\n",
+        game->life, game->coins, game->potions, game->extra_sword, game->lower_armor
+    );
+
+    start_game(game);
+}
 
 void add_save(GameState *current_game) {
     SaveNode *new_node = malloc(sizeof(SaveNode));
@@ -104,7 +112,7 @@ void add_save(GameState *current_game) {
     else{
         last_node->next = new_node;
     }
-    printf("Game Saved Successfully!\n");
+    printf("\nGame Saved Successfully!\n\n");
     start_game(current_game);
 }
 

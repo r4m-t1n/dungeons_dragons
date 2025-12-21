@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "new_game.c"
-// #include "load_game.c"
 // #include "cheats.c"
 
 #define DEFAULT_KONAMI "wwssadadba "
@@ -41,7 +40,7 @@ void main_menu(void){
                 create_new_game();
                 break;
             case '2':
-                // load_game();
+                load_game();
                 break;
             case '3':
                 if (cheats_enabled){

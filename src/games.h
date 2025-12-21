@@ -21,8 +21,13 @@ typedef struct SaveNode {
 } SaveNode;
 
 void main_menu(void);
+void start_game(GameState *game);
+void load_game(void);
+void quick_rest(GameState *game);
+void display_inventory(GameState *game);
 void save_game(GameState *current_game);
 void exit_game(GameState *game);
+int total_items(GameState *game);
 
 SaveNode *search_game(int num);
 void print_saved_games(void);
