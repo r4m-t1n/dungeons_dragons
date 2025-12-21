@@ -28,6 +28,10 @@ void display_inventory(GameState *game);
 void save_game(GameState *current_game);
 void exit_game(GameState *game);
 int total_items(GameState *game);
+void modify_life(SaveNode *saved_node);
+void modify_coin(SaveNode *saved_node);
+void modify_key(SaveNode *saved_node);
+int detect_konami(char code, int *char_index);
 
 SaveNode *search_game(int num);
 int print_saved_games(void);

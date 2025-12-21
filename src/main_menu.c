@@ -2,14 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 #include "new_game.c"
-// #include "cheats.c"
+#include "cheats.c"
 
 #define DEFAULT_KONAMI "wwssadadba "
 
 void print_menu(int cheats_enabled){
     if (cheats_enabled){
         printf(
-            "Initial Game Menu :\n\n"
+            "\nInitial Game Menu :\n\n"
                 "\t1. New Game\n"
                 "\t2. Load Game\n"
                 "\t3. Cheats\n"
@@ -17,7 +17,7 @@ void print_menu(int cheats_enabled){
         );
     } else {
         printf(
-            "Initial Game Menu :\n\n"
+            "\nInitial Game Menu :\n\n"
                 "\t1. New Game\n"
                 "\t2. Load Game\n"
             "\nChoose an action [1-2]: "
@@ -26,14 +26,16 @@ void print_menu(int cheats_enabled){
 }
 
 void main_menu(void){
-    char user_input;
+    char input_string[64];
     int char_index = 0;
     short cheats_enabled = 0;
 
     print_menu(cheats_enabled);
 
     while (1){
-        scanf(" %c", &user_input);
+        fgets(input_string, sizeof(input_string), stdin);
+        char user_input = input_string[0];
+
         switch (user_input)
         {
             case '1':
@@ -44,12 +46,14 @@ void main_menu(void){
                 break;
             case '3':
                 if (cheats_enabled){
-                    // cheats_menu();
+                    cheats_menu();
                 }
                 break;
             default:
-                // cheats_enabled = detect_konami(user_input, &char_index);
-                print_menu(cheats_enabled);
+                if (cheats_enabled){
+                    break;
+                }
+                cheats_enabled = detect_konami(user_input, &char_index);
                 break;
         }
         print_menu(cheats_enabled);
