@@ -8,11 +8,12 @@ void print_saved_games(void){
     printf("Saved Games :\n\n");
     SaveNode *current = saved_games;
     if (current == NULL){
-        printf("No saved game found.");
-        return;
+        printf("No saved game found.\n");
+        return main_menu();;
     }
-    int c = 1;
+    int c = 0;
     while (current != NULL){
+        c++;
         char time[20];
         strftime(time, 20, "%d-%m-%Y %H:%M:%S", localtime(&current->state.time));
 
@@ -23,15 +24,13 @@ void print_saved_games(void){
         }
 
         printf(
-            "%d. %s, %d L. POINTS, %d COINS, %d ITEMS, %d COMPLETED MISSIONS",
+            "%d. %s, %d L. POINTS, %d COINS, %d ITEMS, %d COMPLETED MISSIONS\n",
             c, time, current->state.life, current->state.coins,
             total_items(&current->state), count_missions
         );
         current = current->next;
-        c++;
-
     }
-    printf("Select a game [1 - %d]:", c);
+    printf("\nSelect a game [1 - %d]:", c);
 }
 
 SaveNode *search_game(int num){
