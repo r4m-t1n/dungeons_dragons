@@ -25,7 +25,7 @@ void print_saved_games(void){
         printf(
             "%d. %s, %d L. POINTS, %d COINS, %d ITEMS, %d COMPLETED MISSIONS",
             c, time, current->state.life, current->state.coins,
-            total_items(current), count_missions
+            total_items(&current->state), count_missions
         );
         current = current->next;
         c++;
