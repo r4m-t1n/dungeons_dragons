@@ -32,4 +32,5 @@ void create_new_game(){
     };
 
     start_game(new_game);
+    return;
 }

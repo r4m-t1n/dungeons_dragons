@@ -4,12 +4,12 @@
 
 extern SaveNode *saved_games;
 
-void print_saved_games(void){
+int print_saved_games(void){
     printf("Saved Games :\n\n");
     SaveNode *current = saved_games;
     if (current == NULL){
         printf("No saved game found.\n");
-        return main_menu();;
+        return 0;
     }
     int c = 0;
     while (current != NULL){
@@ -30,7 +30,8 @@ void print_saved_games(void){
         );
         current = current->next;
     }
-    printf("\nSelect a game [1 - %d]:", c);
+    printf("\nSelect a game [1 - %d]: ", c);
+    return 1;
 }
 
 SaveNode *search_game(int num){

@@ -20,30 +20,31 @@ void display_village_menu(){
 }
 
 void start_game(GameState *game){
-    display_village_menu();
-
-    int user_input;
-    scanf("%d", &user_input);
-    switch (user_input)
-    {
-    case 1:
-        // start_mission(game);
-        break;
-    case 2:
-        quick_rest(game);
-        break;
-    case 3:
-        display_inventory(game);
-        break;
-    case 4:
-        save_game(game);
-        break;
-    case 5:
-        exit_game(game);
-        break;
-    default:
+    while (1) {
         display_village_menu();
-        break;
+
+        int user_input;
+        scanf("%d", &user_input);
+        switch (user_input)
+        {
+        case 1:
+            // start_mission(game);
+            break;
+        case 2:
+            quick_rest(game);
+            break;
+        case 3:
+            display_inventory(game);
+            break;
+        case 4:
+            save_game(game);
+            break;
+        case 5:
+            exit_game(game);
+            return;
+        default:
+            break;
+        }
     }
 }
 
@@ -77,8 +78,7 @@ void quick_rest(GameState *game){
     } else{
         printf("\nYour life points are full!\n\n");
     }
-
-    start_game(game);
+    return;
 }
 
 void display_inventory(GameState *game){
@@ -91,11 +91,12 @@ void display_inventory(GameState *game){
             "\n\tLower Armor Damage: %d\n\n",
         game->life, game->coins, game->potions, game->extra_sword, game->lower_armor
     );
-
-    start_game(game);
+    return;
 }
 
-void add_save(GameState *current_game) {
+void save_game(GameState *current_game) {
+    current_game->time = time(NULL);
+
     SaveNode *new_node = malloc(sizeof(SaveNode));
     if (new_node == NULL) {
         printf("ERROR: Can't allocate memory.\n");
@@ -113,12 +114,7 @@ void add_save(GameState *current_game) {
         last_node->next = new_node;
     }
     printf("\nGame Saved Successfully!\n\n");
-    start_game(current_game);
-}
-
-void save_game(GameState *current_game){
-    current_game->time = time(NULL);
-    add_save(current_game);
+    return;
 }
 
 void exit_game(GameState *game){
@@ -129,7 +125,7 @@ void exit_game(GameState *game){
         scanf("%7s", input);
         if (strcmp(input, "Yes") == 0){
             free(game);
-            main_menu();
+            return;
             return;
         } else if (strcmp(input, "No") == 0){
             start_game(game);

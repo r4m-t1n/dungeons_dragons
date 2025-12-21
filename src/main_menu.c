@@ -52,6 +52,7 @@ void main_menu(void){
                 print_menu(cheats_enabled);
                 break;
         }
+        print_menu(cheats_enabled);
     }
 }
 

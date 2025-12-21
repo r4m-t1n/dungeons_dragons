@@ -30,7 +30,7 @@ void exit_game(GameState *game);
 int total_items(GameState *game);
 
 SaveNode *search_game(int num);
-void print_saved_games(void);
+int print_saved_games(void);
 
 enum RoomTypes{
     FIGHT,
