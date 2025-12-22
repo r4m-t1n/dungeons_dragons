@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "games.h"
+#include "game_utils.h"
 
 extern SaveNode *saved_games;
 
@@ -30,7 +31,7 @@ int print_saved_games(void){
         );
         current = current->next;
     }
-    printf("\nSelect a game [1 - %d]: ", c);
+    printf("\nSelect a game [1-%d]: ", c);
     return 1;
 }
 

@@ -1,5 +1,9 @@
 #include <stdio.h>
+#include <string.h>
 #include "games.h"
+#include "constants.h"
+#include "cheats.h"
+#include "game_utils.h"
 
 void cheats_menu(){
     while (1){
@@ -90,4 +94,20 @@ void modify_key(SaveNode *saved_node){
     if (saved_node->state.has_key) key_available = "Available";
 
     printf("\nFinal mission's availablity changed: it is %s now.\n", key_available);
+}
+
+int detect_konami(char code, int *char_index){
+
+    const char *konami = DEFAULT_KONAMI;
+
+    if (code != konami[*char_index]){
+        *char_index = 0;
+        return 0;
+    }
+    (*char_index)++;
+    if (*char_index == strlen(konami)){
+        *char_index = 0;
+        return 1;
+    }
+    return 0;
 }

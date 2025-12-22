@@ -1,0 +1,15 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+#define DEFAULT_KONAMI "wwssadadba "
+
+#define DEFAULT_TIME 0
+#define DEFAULT_LIFE_POINT 20
+#define DEFAULT_COINS 0
+#define DEFAULT_POTIONS 0
+#define DEFAULT_EXTRA_SWORD 0
+#define DEFAULT_LOWER_ARMOR 0
+#define DEFAULT_HAS_KEY 0
+#define DEFAULT_COMPLETED_M {0, 0, 0, 0}
+
+#endif

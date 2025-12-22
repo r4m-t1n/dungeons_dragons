@@ -1,11 +1,67 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
-#include <unistd.h>
 #include <string.h>
+#include <unistd.h>
+#include <time.h>
 #include "games.h"
+#include "constants.h"
+#include "game_menu.h"
+#include "missions.h"
+#include "game_utils.h"
 
 extern SaveNode *saved_games;
+
+
+void create_new_game(){
+    GameState *new_game = malloc(sizeof(GameState));
+    if (!new_game){
+        printf("ERROR: Can't allocate memory.\n");
+        return;
+    }
+    *new_game = (GameState){
+        .time = DEFAULT_TIME,
+        .life = DEFAULT_LIFE_POINT,
+        .coins = DEFAULT_COINS,
+        .potions = DEFAULT_POTIONS,
+        .extra_sword = DEFAULT_EXTRA_SWORD,
+        .lower_armor = DEFAULT_LOWER_ARMOR,
+        .has_key = DEFAULT_HAS_KEY,
+        .completed_m = DEFAULT_COMPLETED_M
+    };
+
+    start_game(new_game);
+    return;
+}
+
+void load_game(void){
+    while (1) {
+        if (print_saved_games() == 0){
+            return;
+        }
+
+        int selected_game;
+        scanf("%d", &selected_game);
+
+        SaveNode *saved_game = search_game(selected_game);
+        if (saved_game == NULL){
+            printf("ERROR: the game number you entered does not exist.\n\n");
+            continue;
+        }
+
+        GameState *current_game = malloc(sizeof(GameState));
+
+        if (!current_game){
+            printf("ERROR: Can't allocate memory.\n");
+            return;
+        }
+
+        *current_game = saved_game->state;
+
+        start_game(current_game);
+        return;
+    }
+}
+
 
 void display_village_menu(){
     printf(
@@ -43,42 +99,6 @@ void start_game(GameState *game){
             exit_game(game);
             return;
         default:
-            break;
-        }
-    }
-}
-
-int select_mission(GameState *game){
-    printf(
-        "Mission Selection Menu :\n\n"
-            "\t1. Rotting Swamp\n"
-            "\t2. Haunted Mansion\n"
-            "\t3. Crystal Cave\n\n"
-        "Choose an action [1 -3]: "
-    );
-
-    while (1) {
-        int user_input;
-        scanf("%d", &user_input);
-        switch (user_input)
-        {
-        case 1:
-            mission_rotting_swamp(game);
-            break;
-        case 2:
-            // mission_haunted_mansion(game);
-            break;
-        case 3:
-            // mission_crystal_cave(game);
-            break;
-        default:
-            printf(
-                "Mission Selection Menu :\n\n"
-                    "\t1. Rotting Swamp\n"
-                    "\t2. Haunted Mansion\n"
-                    "\t3. Crystal Cave\n\n"
-                "Choose an action [1 -3]: "
-            );
             break;
         }
     }
@@ -157,58 +177,6 @@ void exit_game(GameState *game){
             printf("\n\033[31mInvalid input\033[0m\n.");
             start_game(game);
             return;
-        }
-    }
-}
-
-void mission_rotting_swamp(GameState *game){
-    printf("Goals: Defeat 3 Orc Generals of the Dark Lord\n");
-    printf("Mission Status: Defeated %d up 3 Orc Generals.\n\n", game->missions_list.mission_rsamp.defeated_orc);
-    printf(
-        "Mission Menu :\n\n"
-            "\t1. Explore Dungeon Room\n"
-            "\t2. Shop\n"
-            "\t3. Inventory\n"
-            "\t4. Return to Village (Pay 50 Coins)\n\n"
-        "Choose an action [1 -4]: "
-    );
-
-    while (1) {
-        int user_input;
-        scanf("%d", &user_input);
-        switch (user_input)
-        {
-        case 1:
-            // explore_dungeon_room(game);
-            break;
-        case 2:
-            // enter_shop(game);
-            break;
-        case 3:
-            display_inventory(game);
-
-            printf(
-                "Mission Menu :\n\n"
-                    "\t1. Explore Dungeon Room\n"
-                    "\t2. Shop\n"
-                    "\t3. Inventory\n"
-                    "\t4. Return to Village (Pay 50 Coins)\n\n"
-                "Choose an action [1 -4]: "
-            );
-            break;
-        case 4:
-            // return_to_village_by_fine(game);
-            break;
-        default:
-            printf(
-                "Mission Menu :\n\n"
-                    "\t1. Explore Dungeon Room\n"
-                    "\t2. Shop\n"
-                    "\t3. Inventory\n"
-                    "\t4. Return to Village (Pay 50 Coins)\n\n"
-                "Choose an action [1 -4]: "
-            );
-            break;
         }
     }
 }
