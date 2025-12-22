@@ -28,7 +28,7 @@ void start_game(GameState *game){
         switch (user_input)
         {
         case 1:
-            // start_mission(game);
+            select_mission(game);
             break;
         case 2:
             quick_rest(game);
@@ -48,18 +48,41 @@ void start_game(GameState *game){
     }
 }
 
-// int start_mission(GameState *game){
-//     printf(
-//         "Mission Selection Menu :\n\n"
-//             "\t1. Rotting Swamp\n"
-//             "\t2. Haunted Mansion\n"
-//             "\t3. Crystal Cave\n"
-//         "Choose an action [1 -3]: "
-//     );
-//     int input;
-//     scanf("%d", &input);
-//     return input;
-// }
+int select_mission(GameState *game){
+    printf(
+        "Mission Selection Menu :\n\n"
+            "\t1. Rotting Swamp\n"
+            "\t2. Haunted Mansion\n"
+            "\t3. Crystal Cave\n\n"
+        "Choose an action [1 -3]: "
+    );
+
+    while (1) {
+        int user_input;
+        scanf("%d", &user_input);
+        switch (user_input)
+        {
+        case 1:
+            mission_rotting_swamp(game);
+            break;
+        case 2:
+            // mission_haunted_mansion(game);
+            break;
+        case 3:
+            // mission_crystal_cave(game);
+            break;
+        default:
+            printf(
+                "Mission Selection Menu :\n\n"
+                    "\t1. Rotting Swamp\n"
+                    "\t2. Haunted Mansion\n"
+                    "\t3. Crystal Cave\n\n"
+                "Choose an action [1 -3]: "
+            );
+            break;
+        }
+    }
+}
 
 void quick_rest(GameState *game){
     if( game->life != 20 ){
@@ -73,10 +96,10 @@ void quick_rest(GameState *game){
             c++;
         }
         game->life = 20;
-        printf("\nLife Points Restored to 20!\n");
+        printf("\n\033[32mLife Points Restored to 20!\033[0m\n");
         sleep(1);
     } else{
-        printf("\nYour life points are full!\n\n");
+        printf("\n\033[34mYour life points are full!\033[0m\n\n");
     }
     return;
 }
@@ -84,11 +107,11 @@ void quick_rest(GameState *game){
 void display_inventory(GameState *game){
     printf(
         "\nYour Stats:"
-            "\n\tLife Points: %d"
-            "\n\tCoins: %d"
-            "\n\tPotions: %d"
-            "\n\tExtra Sword Damage: %d"
-            "\n\tLower Armor Damage: %d\n\n",
+            "\n\t\033[1mLife Points: %d\033[0m"
+            "\n\t\033[1mCoins: %d\033[0m"
+            "\n\t\033[1mPotions: %d\033[0m"
+            "\n\t\033[1mExtra Sword Damage: %d\033[0m"
+            "\n\t\033[1mLower Armor Damage: %d\033[0m\n\n",
         game->life, game->coins, game->potions, game->extra_sword, game->lower_armor
     );
     return;
@@ -99,7 +122,7 @@ void save_game(GameState *current_game) {
 
     SaveNode *new_node = malloc(sizeof(SaveNode));
     if (new_node == NULL) {
-        printf("ERROR: Can't allocate memory.\n");
+        printf("\033[31mERROR: Can't allocate memory.\033[0m\n");
         return;
     }
     new_node->state = *current_game;
@@ -113,15 +136,15 @@ void save_game(GameState *current_game) {
     else{
         last_node->next = new_node;
     }
-    printf("\nGame Saved Successfully!\n\n");
+    printf("\n\033[32mGame Saved Successfully!\033[0m\n\n");
     return;
 }
 
 void exit_game(GameState *game){
-    printf("You are exiting the game, remember to save the game so as not to lose your progress.");
+    printf("You are exiting the game, remember to \033[1msave\033[0m the game so as not to lose your progress.");
     char input[8];
     while (1){
-        printf("\nAre you sure to proceed? [Yes/No]\n");
+        printf("\nAre you sure to proceed? \033[1m[Yes/No]\033[0m\n");
         scanf("%7s", input);
         if (strcmp(input, "Yes") == 0){
             free(game);
@@ -131,9 +154,61 @@ void exit_game(GameState *game){
             start_game(game);
             return;
         } else {
-            printf("\nInvalid input\n.");
+            printf("\n\033[31mInvalid input\033[0m\n.");
             start_game(game);
             return;
+        }
+    }
+}
+
+void mission_rotting_swamp(GameState *game){
+    printf("Goals: Defeat 3 Orc Generals of the Dark Lord\n");
+    printf("Mission Status: Defeated %d up 3 Orc Generals.\n\n", game->missions_list.mission_rsamp.defeated_orc);
+    printf(
+        "Mission Menu :\n\n"
+            "\t1. Explore Dungeon Room\n"
+            "\t2. Shop\n"
+            "\t3. Inventory\n"
+            "\t4. Return to Village (Pay 50 Coins)\n\n"
+        "Choose an action [1 -4]: "
+    );
+
+    while (1) {
+        int user_input;
+        scanf("%d", &user_input);
+        switch (user_input)
+        {
+        case 1:
+            // explore_dungeon_room(game);
+            break;
+        case 2:
+            // enter_shop(game);
+            break;
+        case 3:
+            display_inventory(game);
+
+            printf(
+                "Mission Menu :\n\n"
+                    "\t1. Explore Dungeon Room\n"
+                    "\t2. Shop\n"
+                    "\t3. Inventory\n"
+                    "\t4. Return to Village (Pay 50 Coins)\n\n"
+                "Choose an action [1 -4]: "
+            );
+            break;
+        case 4:
+            // return_to_village_by_fine(game);
+            break;
+        default:
+            printf(
+                "Mission Menu :\n\n"
+                    "\t1. Explore Dungeon Room\n"
+                    "\t2. Shop\n"
+                    "\t3. Inventory\n"
+                    "\t4. Return to Village (Pay 50 Coins)\n\n"
+                "Choose an action [1 -4]: "
+            );
+            break;
         }
     }
 }

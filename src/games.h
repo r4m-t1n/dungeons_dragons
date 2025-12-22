@@ -4,6 +4,16 @@
 #include <time.h>
 #include <stdbool.h>
 
+typedef struct MissionRSwamp{
+    unsigned short defeated_orc;
+    unsigned short opened_room;
+} MissionRSwamp;
+
+typedef struct MissionsList{
+    unsigned short completed_num;
+    struct MissionRSwamp mission_rsamp;
+} MissionsList;
+
 typedef struct GameState{
     time_t time;
     unsigned int life;
@@ -13,6 +23,7 @@ typedef struct GameState{
     unsigned short lower_armor;
     bool has_key;
     unsigned int completed_m[4];
+    struct MissionsList missions_list;
 } GameState;
 
 typedef struct SaveNode {
@@ -21,6 +32,8 @@ typedef struct SaveNode {
 } SaveNode;
 
 void main_menu(void);
+int select_mission(GameState *game);
+void mission_rotting_swamp(GameState *game);
 void start_game(GameState *game);
 void load_game(void);
 void quick_rest(GameState *game);
