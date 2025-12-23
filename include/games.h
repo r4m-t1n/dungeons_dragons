@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include "missions.h"
 
-typedef struct GameState{
+typedef struct {
     time_t time;
     unsigned int life;
     int coins;
@@ -14,10 +14,10 @@ typedef struct GameState{
     unsigned short lower_armor;
     bool has_key;
     unsigned int completed_m[4];
-    struct MissionsList missions_list;
+    MissionsList missions_list;
 } GameState;
 
-typedef struct SaveNode {
+typedef struct {
     GameState state;
     struct SaveNode *next;
 } SaveNode;

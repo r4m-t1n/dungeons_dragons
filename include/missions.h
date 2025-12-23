@@ -5,14 +5,14 @@
 
 typedef struct GameState GameState;
 
-typedef struct MissionRSwamp{
+typedef struct {
     unsigned short defeated_orc;
     unsigned short opened_room;
 } MissionRSwamp;
 
-typedef struct MissionsList{
+typedef struct {
     unsigned short completed_num;
-    struct MissionRSwamp mission_rsamp;
+    MissionRSwamp mission_rsamp;
 } MissionsList;
 
 enum RoomTypes{
@@ -21,7 +21,7 @@ enum RoomTypes{
     EMPTY
 };
 
-typedef struct Enemy{
+typedef struct {
     unsigned int number;
     short room_type;
     unsigned short fatal_strike;
