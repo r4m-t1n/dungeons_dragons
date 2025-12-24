@@ -5,19 +5,19 @@
 #include <stdbool.h>
 #include "missions.h"
 
-typedef struct {
+typedef struct GameState{
     time_t time;
-    unsigned int life;
     int coins;
+    unsigned int life;
+    unsigned int completed_m[4];
     unsigned int potions;
     unsigned short extra_sword;
     unsigned short lower_armor;
     bool has_key;
-    unsigned int completed_m[4];
     MissionsList missions_list;
 } GameState;
 
-typedef struct {
+typedef struct SaveNode{
     GameState state;
     struct SaveNode *next;
 } SaveNode;
