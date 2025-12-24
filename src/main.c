@@ -3,6 +3,7 @@
 #include "games.h"
 #include "game_menu.h"
 #include "cheats.h"
+#include "game_utils.h"
 
 SaveNode *saved_games = NULL;
 
@@ -26,15 +27,15 @@ void print_menu(int cheats_enabled){
 }
 
 int main(void){
-    char input_string[64];
+    char user_input;
     int char_index = 0;
     short cheats_enabled = 0;
 
     print_menu(cheats_enabled);
 
     while (1){
-        fgets(input_string, sizeof(input_string), stdin);
-        char user_input = input_string[0];
+        scanf("%c", &user_input);
+        clean_input();
 
         switch (user_input)
         {

@@ -13,6 +13,7 @@ void cheats_menu(){
 
         int selected_game;
         scanf("%d", &selected_game);
+        clean_input();
 
         SaveNode *saved_node = search_game(selected_game);
         if (saved_node == NULL){
@@ -37,6 +38,7 @@ void cheats_menu(){
 
         int selected_option;
         scanf("%d", &selected_option);
+        clean_input();
 
         switch (selected_option)
         {
@@ -63,6 +65,7 @@ void modify_life(SaveNode *saved_node){
 
     printf("\nEnter the life-points between 1-20: ");
     scanf("%d", &life_point);
+    clean_input();
 
     if (life_point < 1 || life_point > 20){
         printf("%d is not a valid life-point!\n", life_point);
@@ -77,6 +80,7 @@ void modify_coin(SaveNode *saved_node){
 
     printf("\nEnter the amount of coins: ");
     scanf("%d", &coins);
+    clean_input();
 
     if (coins < 0){
         printf("%d is not a valid coin!\n", coins);

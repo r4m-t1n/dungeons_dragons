@@ -71,7 +71,7 @@ void display_village_menu(){
             "\t3. Inventory\n"
             "\t4. Save the game\n"
             "\t5. Exit\n\n"
-        "Choose an action [1 -5]: "
+        "Choose an action [1-5]: "
     );
 }
 
@@ -81,6 +81,8 @@ void start_game(GameState *game){
 
         int user_input;
         scanf("%d", &user_input);
+        clean_input();
+
         switch (user_input)
         {
         case 1:
@@ -166,9 +168,10 @@ void exit_game(GameState *game){
     while (1){
         printf("\nAre you sure to proceed? \033[1m[Yes/No]\033[0m\n");
         scanf("%7s", input);
+        clean_input();
+        
         if (strcmp(input, "Yes") == 0){
             free(game);
-            return;
             return;
         } else if (strcmp(input, "No") == 0){
             start_game(game);

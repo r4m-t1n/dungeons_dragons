@@ -63,3 +63,8 @@ SaveNode *search_game(int num){
 int total_items(GameState *game){
     return game->potions + game->extra_sword + game->lower_armor;
 }
+
+void clean_input(){
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF);
+}
