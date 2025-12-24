@@ -1,10 +1,83 @@
 #include <stdio.h>
 #include "games.h"
 #include "missions.h"
+#include "game_menu.h"
+#include "game_utils.h"
+
+void enter_shop(GameState *game){
+    while (1){
+        printf(
+            "\n\n"
+                "----------------------------------------------------------------------------------------------------\n"
+                "| N |      Item      |                       Description                        |  Coins Required  |\n"
+                "|--------------------------------------------------------------------------------------------------|\n"
+                "| 1 |  Health Potion |  Restore until 6 Life Points (rolling a 6-sided dice)    |         4        |\n"
+                "| 2 |      Sword     | +1 to the hero attack (permanent, purchasable only once) |         5        |\n"
+                "| 3 |      Armor     | -1 from enemy damage (permanent, purchasable only once)  |         10       |\n"
+                "----------------------------------------------------------------------------------------------------\n"
+                "\nChoose an item to purchase [1-3]: "
+        );
+        int user_input;
+        scanf("%d", &user_input);
+        clean_input();
+
+        switch (user_input)
+        {
+        case 1:
+            if (game->coins - 4 >= 0){
+                game->coins -= 4;
+                printf(
+                    "\n\nSuccessfuly purchased!\nYou now have %d Health Potions.\n",
+                    ++game->potions
+                );
+                break;
+            }
+            printf(
+                "\n\nInsufficient coins!\n Your balance: %d coins\n",
+                game->coins
+            );
+            return;
+        case 2:
+            if (game->extra_sword != 0){
+               printf("\n\nYou already have the extra sword damage!\n"); 
+               break;
+            }
+            if (game->coins - 5 >= 0){
+                game->coins -= 5;
+                printf("\n\nSuccessfuly purchased!\nYour sword now has +1 damage.\n");
+                break;
+            }
+            printf(
+                "\n\nInsufficient coins!\n Your balance: %d coins.\n",
+                game->coins
+            );
+            return;
+        case 3:
+            if (game->lower_armor != 0){
+               printf("\n\nYou already have the extra sword damage!\n"); 
+               break;
+            }
+            if (game->coins - 10 >= 0){
+                game->coins -= 10;
+                printf("\n\nSuccessfuly purchased!\nEnemies now have -1 armor.\n");
+                break;
+            }
+            printf(
+                "\n\nInsufficient coins!\n Your balance: %d coins.\n",
+                game->coins
+            );
+            return;
+        case -1:
+            return;
+        default:
+            break;
+        }
+    }
+}
 
 int select_mission(GameState *game){
     while (1) {
-        if (!game.has_key) {
+        if (!game->has_key) {
             printf(
                 "Mission Selection Menu :\n\n"
                     "\t1. Rotting Swamp\n"
@@ -24,6 +97,8 @@ int select_mission(GameState *game){
         }
         int user_input;
         scanf("%d", &user_input);
+        clean_input();
+
         switch (user_input)
         {
         case 1:
@@ -59,13 +134,15 @@ void mission_rotting_swamp(GameState *game){
         );
         int user_input;
         scanf("%d", &user_input);
+        clean_input();
+
         switch (user_input)
         {
         case 1:
             // explore_dungeon_room(game);
             break;
         case 2:
-            // enter_shop(game);
+            enter_shop(game);
             break;
         case 3:
             display_inventory(game);

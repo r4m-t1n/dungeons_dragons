@@ -38,5 +38,6 @@ enum GameMissions{
 
 int select_mission(GameState *game);
 void mission_rotting_swamp(GameState *game);
+void enter_shop(GameState *game);
 
 #endif
