@@ -11,6 +11,13 @@ int roll_dice() {
     return (rand() % 6) + 1;
 }
 
+Enemy initialize_enemy(room_number){
+    Enemy enemy = malloc(Enemy);
+    enemy->number = room_number;
+    // enemy->room_type = 
+    return enemy;
+}
+
 void enter_shop(GameState *game){
     while (1){
         printf(
@@ -61,7 +68,7 @@ void enter_shop(GameState *game){
             return;
         case 3:
             if (game->lower_armor != 0){
-               printf("\n\nYou already have the extra sword damage!\n"); 
+               printf("\n\nYou already have the 1-armor reducer!\n");
                break;
             }
             if (game->coins - 10 >= 0){
@@ -131,6 +138,8 @@ void mission_rotting_swamp(GameState *game){
         "Goals: Defeat 3 Orc Generals of the Dark Lord\n"
     );
 
+    int non_generals = 0;
+
     while (1) {
         printf(
             "\nMission Status: Defeated %d of 3 Orc Generals.\n\n"
@@ -151,7 +160,7 @@ void mission_rotting_swamp(GameState *game){
         {
         case 1:
             if (game->life > 0){
-                explore_rotting_swamp_room(game);
+                // explore_rotting_swamp_room(game, &non_generals);
             }
             break;
         case 2:
@@ -177,8 +186,15 @@ void mission_rotting_swamp(GameState *game){
     }
 }
 
-void explore_rotting_swamp_room(GameState *game){
-    MissionRSwamp *mission = &game->missions_list.mission_rsamp;
+int random_enemy_rotting_swamp(int *non_generals){
+    int chosen_room;
+    if (10 - non_generals > 3){
+        chosen_room = roll_dice();
+        if
+    } else if (10 - non_generals == 3){
+        chosen_room = ORC_GENERAL;
+    }
+    return chosen_room;
 }
 
 void play_rotting_swamp_room(GameState *game, DungeonRoom *room){
