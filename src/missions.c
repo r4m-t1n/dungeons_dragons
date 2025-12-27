@@ -1,8 +1,15 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
 #include "games.h"
 #include "missions.h"
 #include "game_menu.h"
 #include "game_utils.h"
+
+int roll_dice() {
+    return (rand() % 6) + 1;
+}
 
 void enter_shop(GameState *game){
     while (1){
@@ -77,7 +84,7 @@ void enter_shop(GameState *game){
 
 int select_mission(GameState *game){
     while (1) {
-        if (!game->has_key) {
+        if (game->has_key) {
             printf(
                 "Mission Selection Menu :\n\n"
                     "\t1. Rotting Swamp\n"
@@ -117,21 +124,25 @@ int select_mission(GameState *game){
 }
 
 void mission_rotting_swamp(GameState *game){
+    MissionRSwamp *mission = &game->missions_list.mission_rsamp;
+
     printf(
+        "\n\033[1m=== ROTTING SWAMP ===\033[0m\n"
         "Goals: Defeat 3 Orc Generals of the Dark Lord\n"
-        "Mission Status: Defeated %d up 3 Orc Generals.\n\n",
-        game->missions_list.mission_rsamp.defeated_orc
     );
 
     while (1) {
         printf(
+            "\nMission Status: Defeated %d of 3 Orc Generals.\n\n"
             "Mission Menu :\n\n"
                 "\t1. Explore Dungeon Room\n"
                 "\t2. Shop\n"
                 "\t3. Inventory\n"
                 "\t4. Return to Village (Pay 50 Coins)\n\n"
-            "Choose an action [1-4]: "
+            "Choose an action [1-4]: ",
+            mission->defeated_orc_generals
         );
+
         int user_input;
         scanf("%d", &user_input);
         clean_input();
@@ -139,7 +150,9 @@ void mission_rotting_swamp(GameState *game){
         switch (user_input)
         {
         case 1:
-            // explore_dungeon_room(game);
+            if (game->life > 0){
+                explore_rotting_swamp_room(game);
+            }
             break;
         case 2:
             enter_shop(game);
@@ -148,10 +161,58 @@ void mission_rotting_swamp(GameState *game){
             display_inventory(game);
             break;
         case 4:
-            // return_to_village_by_fine(game);
+            if (game->coins >= 50){
+                game->coins -= 50;
+                printf("\n\033[33mYou paid 50 coins to return to the village.\033[0m\n\n");
+                sleep(1);
+                return;
+            } else {
+                printf("\n\033[31mYou need 50 coins to return to the village! You have %d coins.\033[0m\n", game->coins);
+            }
             break;
         default:
+            printf("\n\033[31mInvalid option!\033[0m\n");
             break;
         }
     }
+}
+
+void explore_rotting_swamp_room(GameState *game){
+    MissionRSwamp *mission = &game->missions_list.mission_rsamp;
+}
+
+void play_rotting_swamp_room(GameState *game, DungeonRoom *room){
+    switch (room->type) 
+    {
+    case WILD_DOG:
+        // fight_enemy(game, 2, 1, 0, "Wild Dog");
+        break;
+
+    case GOBLIN:
+        // fight_enemy(game, 3, 2, 2, "Goblin");
+        break;
+
+    case SKELETON:
+        // fight_enemy(game, 4, 2, 4, "Skeleton");
+        break;
+
+    case ORC:
+        // fight_enemy(game, 3, 4, 6, "Orc");
+        break;
+
+    case POISONOUS_BOG: {
+        printf("\nYou encounter a \033[35mPoisonous Bog\033[0m!\n");
+        int dmg = roll_dice();
+        game->life -= dmg;
+        printf("\033[31mYou take %d poison damage!\033[0m (Life Points: %d)\n", dmg, game->life);
+        sleep(1);
+        break;
+    }
+
+    case ORC_GENERAL:
+        // fight_enemy(game, 6, 3, 12, "Orc General")
+        break;
+    }
+
+    room->cleared = true;
 }
