@@ -6,32 +6,6 @@
 
 typedef struct GameState GameState;
 
-typedef enum {
-    WILD_DOG = 1,
-    GOBLIN,
-    SKELETON,
-    ORC,
-    POISONOUS_BOG,
-    ORC_GENERAL
-} RSRooms;
-
-typedef struct {
-    unsigned int room;
-    unsigned int type;
-} DungeonRoom;
-
-typedef struct {
-    DungeonRoom rooms[10];
-    int room_count;
-    int current_room;
-    int defeated_orc_generals;
-    bool is_completed;
-} MissionRSwamp;
-
-typedef struct {
-    MissionRSwamp mission_rsamp;
-} MissionsList;
-
 typedef enum{
     FIGHT,
     TRAP,
@@ -39,19 +13,13 @@ typedef enum{
 } RoomTypes;
 
 typedef struct {
+    char name[20];
     unsigned int number;
-    short room_type;
+    int coins;
     unsigned short fatal_strike;
     unsigned short damage;
-    int coins;
+    short room_type;
 } Enemy;
-
-enum GameMissions{
-    ROTTING_SWAMP = 1,
-    HAUNTED_MANSION,
-    CRYSTAL_CAVE,
-    DARK_LORDS_CASTLE
-};
 
 typedef struct{
     char name[18][20];
