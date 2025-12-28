@@ -13,11 +13,11 @@ typedef enum {
     ORC,
     POISONOUS_BOG,
     ORC_GENERAL
-} RoomType;
+} RSRooms;
 
 typedef struct {
-    RoomType type;
-    bool cleared;
+    unsigned int room;
+    unsigned int type;
 } DungeonRoom;
 
 typedef struct {
@@ -32,11 +32,11 @@ typedef struct {
     MissionRSwamp mission_rsamp;
 } MissionsList;
 
-enum RoomTypes{
+typedef enum{
     FIGHT,
     TRAP,
     EMPTY
-};
+} RoomTypes;
 
 typedef struct {
     unsigned int number;
@@ -53,10 +53,19 @@ enum GameMissions{
     DARK_LORDS_CASTLE
 };
 
+typedef struct{
+    char name[18][20];
+    unsigned int number[18];
+    RoomTypes type[18];
+    int fatal[18];
+    int damage[18];
+    int coins[18];
+} RoomDetails;
+
 int select_mission(GameState *game);
 void mission_rotting_swamp(GameState *game);
 void enter_shop(GameState *game);
-void explore_rotting_swamp_room(GameState *game);
+void explore_rotting_swamp_room(GameState *game, int *non_generals);
 void play_rotting_swamp_room(GameState *game, DungeonRoom *room);
 int roll_dice();
 
