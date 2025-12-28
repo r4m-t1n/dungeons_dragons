@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+#include <string.h>
+#include <stdbool.h>
 #include "games.h"
 #include "constants.h"
 #include "missions.h"
@@ -49,7 +51,7 @@ int flip_coin() {
     return rand() % 2;
 }
 
-Enemy *initialize_enemy(GameState **game, int room_number, unsigned int mission){
+Enemy *initialize_enemy(GameState *game, int room_number, unsigned int mission){
     Enemy *enemy = malloc(sizeof(Enemy));
     if (enemy == NULL){
         printf("ERROR: Failed to allocate memory.");
@@ -58,10 +60,11 @@ Enemy *initialize_enemy(GameState **game, int room_number, unsigned int mission)
     int index = ( ( (mission-1) * 6) + room_number) - 1;
 
     enemy->number = room_number;
+    strcpy(enemy->name, mission_rooms.name[index]);
     enemy->room_type = mission_rooms.type[index];
 
     if (mission_rooms.fatal[index] == -100){
-        enemy->fatal_strike = (*game)->extra_sword != 0 ? 5 : mission_rooms.fatal[index];
+        enemy->fatal_strike = game->extra_sword != 0 ? 5 : mission_rooms.fatal[index];
     } else {
         enemy->fatal_strike = mission_rooms.fatal[index];
     }
@@ -75,9 +78,11 @@ Enemy *initialize_enemy(GameState **game, int room_number, unsigned int mission)
             int flipped_coin = flip_coin();
             if (flipped_coin == 1){
                 enemy->coins = mission_rooms.coins[index];
+                enemy->damage = 0;
             } else {
                 enemy->damage = mission_rooms.damage[index];
-                (*game)->life -= mission_rooms.damage[index];
+                enemy->coins = 0;
+                game->life -= mission_rooms.damage[index];
                 printf("You took %d damage!", mission_rooms.damage[index]);
             }
             return enemy;
@@ -271,48 +276,65 @@ int random_enemy_rotting_swamp(int *non_generals){
     return chosen_room;
 }
 
-void explore_rotting_swamp_room(GameState *game, int *non_generals){
-    MissionRSwamp *mission = &game->missions_list.mission_rsamp;
+bool is_hero_defeated(GameState *game){
+    if (game->life <= 0) return true;
+    return false;
+}
+
+bool fight_enemy(GameState *game, Enemy *enemy){
     while (1){
-        int chosen_room = random_enemy_rotting_swamp(non_generals);
+        int rolled_dice = roll_dice();
+        int total_damage = rolled_dice + game->extra_sword;
+        printf(
+            "\nA dice is rolled to determine the hero's attack\n"
+            "The result: %d"
+            "Total damage with extra sword: %d",
+            rolled_dice, total_damage
+        );
 
-        Enemy *enemy = initialize_enemy(&game, chosen_room, 1);
+        if (enemy->fatal_strike <= total_damage){
+            printf(
+                "The %s is defeated. The hero remains with %d life points, and receives %d coins .",
+                enemy->name, game->life, enemy->coins
+            );
+            return true;
+        }
 
+        game->life -= enemy->damage;
+        printf(
+            "The %s deals %d damage to the hero . The hero remains with %d life points .",
+            enemy->name, enemy->damage, game->life
+        );
+        if (is_hero_defeated(game)) return false;
     }
 }
 
-void play_rotting_swamp_room(GameState *game, DungeonRoom *room){
-    switch (room->type) 
-    {
-    case WILD_DOG:
-        // fight_enemy(game, 2, 1, 0, "Wild Dog");
-        break;
+void explore_rotting_swamp_room(GameState *game, int *non_generals){
+    for (int i=1; i<11; i++){
+        int chosen_room = random_enemy_rotting_swamp(non_generals);
 
-    case GOBLIN:
-        // fight_enemy(game, 3, 2, 2, "Goblin");
-        break;
+        Enemy *enemy = initialize_enemy(game, chosen_room, 1);
 
-    case SKELETON:
-        // fight_enemy(game, 4, 2, 4, "Skeleton");
-        break;
+        if (enemy->room_type == EMPTY){
 
-    case ORC:
-        // fight_enemy(game, 3, 4, 6, "Orc");
-        break;
+            printf("\nThe entered room is empty!\nReturning back to mission's menu:\n");
 
-    case POISONOUS_BOG: {
-        printf("\nYou encounter a \033[35mPoisonous Bog\033[0m!\n");
-        int dmg = roll_dice();
-        game->life -= dmg;
-        printf("\033[31mYou take %d poison damage!\033[0m (Life Points: %d)\n", dmg, game->life);
-        sleep(1);
-        break;
+        } else if (enemy->room_type == TRAP){
+
+            printf("\nThe entered room is a trap: %s.\n", enemy->name);
+            if (enemy->damage != 0){
+                game->life -= enemy->damage;
+                printf("You took %d damage!", enemy->damage);
+            }
+            if (enemy->coins > 0){
+                printf("You gained %d coins!", enemy->coins);
+            } else if (enemy->coins < 0){
+                printf("You lost %d coins!", enemy->coins);
+            }
+            game->coins += enemy->coins;
+
+        } else if (enemy->room_type == FIGHT){
+            bool has_won = fight_enemy(game, enemy);
+        }
     }
-
-    case ORC_GENERAL:
-        // fight_enemy(game, 6, 3, 12, "Orc General")
-        break;
-    }
-
-    // room->cleared = true;
 }
