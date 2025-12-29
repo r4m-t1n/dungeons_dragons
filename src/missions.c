@@ -137,6 +137,7 @@ void enter_shop(GameState *game){
             }
             if (game->coins - 5 >= 0){
                 game->coins -= 5;
+                game->extra_sword = 1;
                 printf("\n\nSuccessfuly purchased!\nYour sword now has +1 damage.\n");
                 break;
             }
@@ -146,13 +147,14 @@ void enter_shop(GameState *game){
             );
             return;
         case 3:
-            if (game->lower_armor != 0){
-               printf("\n\nYou already have the 1-armor reducer!\n");
+            if (game->extra_armor != 0){
+               printf("\n\nYou already have the extra armor!\n");
                break;
             }
             if (game->coins - 10 >= 0){
                 game->coins -= 10;
-                printf("\n\nSuccessfuly purchased!\nEnemies now have -1 armor.\n");
+                game->extra_armor = 1;
+                printf("\n\nSuccessfuly purchased!\nYou now receive 1 less damage.\n");
                 break;
             }
             printf(
@@ -210,7 +212,6 @@ int select_mission(GameState *game){
 }
 
 void mission_rotting_swamp(GameState *game){
-    MissionRSwamp *mission = &game->missions_list.mission_rsamp;
 
     printf(
         "\n\033[1m=== ROTTING SWAMP ===\033[0m\n"
@@ -218,17 +219,19 @@ void mission_rotting_swamp(GameState *game){
     );
 
     int non_generals = 0;
+    int defeated_orc_generals = 0;
+    int rooms_visited = 0;
 
-    while (1) {
+    while (rooms_visited < 11) {
         printf(
-            "\nMission Status: Defeated %d of 3 Orc Generals.\n\n"
+            "\n\nMission Status: Defeated %d of 3 Orc Generals.\n"
             "Mission Menu :\n\n"
                 "\t1. Explore Dungeon Room\n"
                 "\t2. Shop\n"
                 "\t3. Inventory\n"
                 "\t4. Return to Village (Pay 50 Coins)\n\n"
             "Choose an action [1-4]: ",
-            mission->defeated_orc_generals
+            defeated_orc_generals
         );
 
         int user_input;
@@ -237,9 +240,26 @@ void mission_rotting_swamp(GameState *game){
 
         switch (user_input)
         {
+        case 0:
+            if (game->potions > 0){
+                game->potions--;
+                int rolled_dice = roll_dice();
+                game->life = (rolled_dice+game->life) > 20 ? 20 : rolled_dice+game->life;
+                printf(
+                    "\nYou used your health potions and healed +%d.\n"
+                    "Your current life points: %d\n",
+                    rolled_dice, game->life
+                );
+            } else {
+                printf("\nYou don't have any health potions!\n");
+            }
+            break;
         case 1:
             if (game->life > 0){
-                explore_rotting_swamp_room(game, &non_generals);
+                explore_rotting_swamp_room(
+                    game, &non_generals, &defeated_orc_generals
+                );
+                rooms_visited++;
             }
             break;
         case 2:
@@ -247,6 +267,7 @@ void mission_rotting_swamp(GameState *game){
             break;
         case 3:
             display_inventory(game);
+            printf("To use your health potions, enter \"0\"");
             break;
         case 4:
             if (game->coins >= 50){
@@ -271,14 +292,13 @@ int random_enemy_rotting_swamp(int *non_generals){
     if (enemy_slots > 3){
         chosen_room = roll_dice();
     } else if (enemy_slots == 3){
-        chosen_room = ORC_GENERAL;
+        chosen_room = 6;
     }
     return chosen_room;
 }
 
 bool is_hero_defeated(GameState *game){
-    if (game->life <= 0) return true;
-    return false;
+    return game->life <= 0;
 }
 
 bool fight_enemy(GameState *game, Enemy *enemy){
@@ -286,55 +306,67 @@ bool fight_enemy(GameState *game, Enemy *enemy){
         int rolled_dice = roll_dice();
         int total_damage = rolled_dice + game->extra_sword;
         printf(
-            "\nA dice is rolled to determine the hero's attack\n"
-            "The result: %d"
-            "Total damage with extra sword: %d",
+            "A dice is rolled to determine the hero's attack\n"
+            "The result: %d\n"
+            "Total damage with extra sword: %d\n",
             rolled_dice, total_damage
         );
 
         if (enemy->fatal_strike <= total_damage){
             printf(
-                "The %s is defeated. The hero remains with %d life points, and receives %d coins .",
+                "The %s is defeated. The hero remains with %d life points, and receives %d coins.\n",
                 enemy->name, game->life, enemy->coins
             );
             return true;
         }
 
-        game->life -= enemy->damage;
+        game->life -= (enemy->damage - game->extra_armor);
         printf(
-            "The %s deals %d damage to the hero . The hero remains with %d life points .",
+            "The %s deals %d damage to the hero. The hero remains with %d life points.\n",
             enemy->name, enemy->damage, game->life
         );
         if (is_hero_defeated(game)) return false;
     }
 }
 
-void explore_rotting_swamp_room(GameState *game, int *non_generals){
-    for (int i=1; i<11; i++){
-        int chosen_room = random_enemy_rotting_swamp(non_generals);
+void explore_rotting_swamp_room(GameState *game, int *non_generals, int *defeated_orc_generals){
+    int chosen_room = random_enemy_rotting_swamp(non_generals);
 
-        Enemy *enemy = initialize_enemy(game, chosen_room, 1);
+    Enemy *enemy = initialize_enemy(game, chosen_room, 1);
 
-        if (enemy->room_type == EMPTY){
+    if (enemy->room_type == EMPTY){
 
-            printf("\nThe entered room is empty!\nReturning back to mission's menu:\n");
+        printf("\nThe hero encounters an Empty Room!\n");
 
-        } else if (enemy->room_type == TRAP){
+    } else if (enemy->room_type == TRAP){
 
-            printf("\nThe entered room is a trap: %s.\n", enemy->name);
-            if (enemy->damage != 0){
-                game->life -= enemy->damage;
-                printf("You took %d damage!", enemy->damage);
-            }
-            if (enemy->coins > 0){
-                printf("You gained %d coins!", enemy->coins);
-            } else if (enemy->coins < 0){
-                printf("You lost %d coins!", enemy->coins);
-            }
-            game->coins += enemy->coins;
-
-        } else if (enemy->room_type == FIGHT){
-            bool has_won = fight_enemy(game, enemy);
+        printf(
+            "\nThe hero encounters a trap: \033[1m%s\033[0m\n",
+            enemy->name
+        );
+        if (enemy->damage != 0){
+            game->life -= enemy->damage;
+            printf("You took %d damage!", enemy->damage);
         }
+        if (enemy->coins > 0){
+            printf("You gained %d coins!", enemy->coins);
+        } else if (enemy->coins < 0){
+            printf("You lost %d coins!", enemy->coins);
+        }
+        game->coins += enemy->coins;
+
+    } else if (enemy->room_type == FIGHT){
+
+        printf(
+            "\nThe hero encounters an enemy: \033[1m%s\033[0m"
+            "\nthe fight begins.\n",
+            enemy->name
+        );
+
+        bool has_won = fight_enemy(game, enemy);
+        if (enemy->number == 6) (*defeated_orc_generals)++;
+
     }
+
+    return;
 }
