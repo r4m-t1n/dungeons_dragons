@@ -7,6 +7,12 @@
 typedef struct GameState GameState;
 
 typedef enum{
+    LOST,
+    WON,
+    BACK
+} MissionState;
+
+typedef enum{
     FIGHT,
     TRAP,
     EMPTY
@@ -30,10 +36,10 @@ typedef struct{
     int coins[18];
 } RoomDetails;
 
-int select_mission(GameState *game);
-void mission_rotting_swamp(GameState *game);
+MissionState select_mission(GameState *game);
+MissionState mission_rotting_swamp(GameState *game);
+MissionState explore_rotting_swamp_room(GameState *game, int *non_generals, int *defeated_orc_generals);
 void enter_shop(GameState *game);
-void explore_rotting_swamp_room(GameState *game, int *non_generals, int *defeated_orc_generals);
 int roll_dice();
 
 #endif

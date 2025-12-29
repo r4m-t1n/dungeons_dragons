@@ -170,7 +170,7 @@ void enter_shop(GameState *game){
     }
 }
 
-int select_mission(GameState *game){
+MissionState select_mission(GameState *game){
     while (1) {
         if (game->has_key) {
             printf(
@@ -197,7 +197,7 @@ int select_mission(GameState *game){
         switch (user_input)
         {
         case 1:
-            mission_rotting_swamp(game);
+            if (mission_rotting_swamp(game) == LOST) return LOST;
             break;
         case 2:
             // mission_haunted_mansion(game);
@@ -205,13 +205,15 @@ int select_mission(GameState *game){
         case 3:
             // mission_crystal_cave(game);
             break;
+        case -1:
+            return BACK;
         default:
             break;
         }
     }
 }
 
-void mission_rotting_swamp(GameState *game){
+MissionState mission_rotting_swamp(GameState *game){
 
     printf(
         "\n\033[1m=== ROTTING SWAMP ===\033[0m\n"
@@ -256,9 +258,10 @@ void mission_rotting_swamp(GameState *game){
             break;
         case 1:
             if (game->life > 0){
-                explore_rotting_swamp_room(
+                MissionState state = explore_rotting_swamp_room(
                     game, &non_generals, &defeated_orc_generals
                 );
+                if (state == LOST) return LOST;
                 rooms_visited++;
             }
             break;
@@ -274,7 +277,7 @@ void mission_rotting_swamp(GameState *game){
                 game->coins -= 50;
                 printf("\n\033[33mYou paid 50 coins to return to the village.\033[0m\n\n");
                 sleep(1);
-                return;
+                return WON;
             } else {
                 printf("\n\033[31mYou need 50 coins to return to the village! You have %d coins.\033[0m\n", game->coins);
             }
@@ -303,6 +306,8 @@ bool is_hero_defeated(GameState *game){
 
 bool fight_enemy(GameState *game, Enemy *enemy){
     while (1){
+        if (is_hero_defeated(game)) return false;
+
         int rolled_dice = roll_dice();
         int total_damage = rolled_dice + game->extra_sword;
         printf(
@@ -325,11 +330,10 @@ bool fight_enemy(GameState *game, Enemy *enemy){
             "The %s deals %d damage to the hero. The hero remains with %d life points.\n",
             enemy->name, enemy->damage, game->life
         );
-        if (is_hero_defeated(game)) return false;
     }
 }
 
-void explore_rotting_swamp_room(GameState *game, int *non_generals, int *defeated_orc_generals){
+MissionState explore_rotting_swamp_room(GameState *game, int *non_generals, int *defeated_orc_generals){
     int chosen_room = random_enemy_rotting_swamp(non_generals);
 
     Enemy *enemy = initialize_enemy(game, chosen_room, 1);
@@ -364,9 +368,16 @@ void explore_rotting_swamp_room(GameState *game, int *non_generals, int *defeate
         );
 
         bool has_won = fight_enemy(game, enemy);
+        if (!has_won){
+            printf(
+                "\nThe hero is defeated!\n"
+                "Returning back to main menu...\n"
+            );
+            return LOST;
+        }
         if (enemy->number == 6) (*defeated_orc_generals)++;
 
     }
 
-    return;
+    return WON;
 }

@@ -86,7 +86,7 @@ void start_game(GameState *game){
         switch (user_input)
         {
         case 1:
-            select_mission(game);
+            if (select_mission(game) == LOST) return;
             break;
         case 2:
             quick_rest(game);
