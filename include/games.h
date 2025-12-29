@@ -12,9 +12,8 @@ typedef struct GameState{
     unsigned int completed_m[4];
     unsigned int potions;
     unsigned short extra_sword;
-    unsigned short lower_armor;
+    unsigned short extra_armor;
     bool has_key;
-    MissionsList missions_list;
 } GameState;
 
 typedef struct SaveNode{

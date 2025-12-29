@@ -24,7 +24,7 @@ void create_new_game(){
         .coins = DEFAULT_COINS,
         .potions = DEFAULT_POTIONS,
         .extra_sword = DEFAULT_EXTRA_SWORD,
-        .lower_armor = DEFAULT_LOWER_ARMOR,
+        .extra_armor = DEFAULT_EXTRA_ARMOR,
         .has_key = DEFAULT_HAS_KEY,
         .completed_m = DEFAULT_COMPLETED_M
     };
@@ -133,8 +133,8 @@ void display_inventory(GameState *game){
             "\n\t\033[1mCoins: %d\033[0m"
             "\n\t\033[1mPotions: %d\033[0m"
             "\n\t\033[1mExtra Sword Damage: %d\033[0m"
-            "\n\t\033[1mLower Armor Damage: %d\033[0m\n\n",
-        game->life, game->coins, game->potions, game->extra_sword, game->lower_armor
+            "\n\t\033[1mExtra Armor Damage: %d\033[0m\n",
+        game->life, game->coins, game->potions, game->extra_sword, game->extra_armor
     );
     return;
 }
