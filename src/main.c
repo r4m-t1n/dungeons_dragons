@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include "games.h"
 #include "game_menu.h"
 #include "cheats.h"
@@ -30,6 +31,8 @@ int main(void){
     char user_input;
     int char_index = 0;
     short cheats_enabled = 0;
+
+    srand(time(NULL));
 
     print_menu(cheats_enabled);
 
