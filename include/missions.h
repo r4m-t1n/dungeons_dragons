@@ -33,8 +33,7 @@ typedef struct{
 int select_mission(GameState *game);
 void mission_rotting_swamp(GameState *game);
 void enter_shop(GameState *game);
-void explore_rotting_swamp_room(GameState *game, int *non_generals);
-void play_rotting_swamp_room(GameState *game, DungeonRoom *room);
+void explore_rotting_swamp_room(GameState *game, int *non_generals, int *defeated_orc_generals);
 int roll_dice();
 
 #endif
