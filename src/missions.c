@@ -120,45 +120,45 @@ void enter_shop(GameState *game){
             if (game->coins - 4 >= 0){
                 game->coins -= 4;
                 printf(
-                    "\n\nSuccessfuly purchased!\nYou now have %d Health Potions.\n",
+                    "\n\n\033[32mSuccessfuly purchased!\033[0m\nYou now have %d Health Potions.\n",
                     ++game->potions
                 );
                 break;
             }
             printf(
-                "\n\nInsufficient coins!\n Your balance: %d coins\n",
+                "\n\n\033[31mInsufficient coins!\033[0m\n Your balance: %d coins.\n",
                 game->coins
             );
             return;
         case 2:
             if (game->extra_sword != 0){
-               printf("\n\nYou already have the extra sword damage!\n"); 
+               printf("\n\n\033[34mYou already have the extra sword damage!\033[0m\n"); 
                break;
             }
             if (game->coins - 5 >= 0){
                 game->coins -= 5;
                 game->extra_sword = 1;
-                printf("\n\nSuccessfuly purchased!\nYour sword now has +1 damage.\n");
+                printf("\n\n\033[32mSuccessfuly purchased!\033[0m\nYour sword now has +1 damage.\n");
                 break;
             }
             printf(
-                "\n\nInsufficient coins!\n Your balance: %d coins.\n",
+                "\n\n\033[31mInsufficient coins!\033[0m\n Your balance: %d coins.\n",
                 game->coins
             );
             return;
         case 3:
             if (game->extra_armor != 0){
-               printf("\n\nYou already have the extra armor!\n");
+               printf("\n\n\033[34mYou already have the extra armor!\033[0m\n");
                break;
             }
             if (game->coins - 10 >= 0){
                 game->coins -= 10;
                 game->extra_armor = 1;
-                printf("\n\nSuccessfuly purchased!\nYou now receive 1 less damage.\n");
+                printf("\n\n\033[32mSuccessfuly purchased!\033[0m\nYou now receive 1 less damage.\n");
                 break;
             }
             printf(
-                "\n\nInsufficient coins!\n Your balance: %d coins.\n",
+                "\n\n\033[31mInsufficient coins!\033[0m\n Your balance: %d coins.\n",
                 game->coins
             );
             return;
@@ -170,31 +170,61 @@ void enter_shop(GameState *game){
     }
 }
 
-MissionState select_mission(GameState *game){
-    while (1) {
-        if (game->has_key) {
-            printf(
-                "\nMission Selection Menu :\n\n"
-                    "\t1. Rotting Swamp\n"
-                    "\t2. Haunted Mansion\n"
-                    "\t3. Crystal Cave\n"
-                    "\t4. Dark Lord's Castle\n\n"
-                "Choose an action [1-4]: "
-            );
-        } else {
-            printf(
-                "\nMission Selection Menu :\n\n"
-                    "\t1. Rotting Swamp\n"
-                    "\t2. Haunted Mansion\n"
-                    "\t3. Crystal Cave\n\n"
-                "Choose an action [1-3]: "
-            );
+void display_mission_menu(GameState *game, int *mission_linker){
+    printf("\nMission Selection Menu:\n\n");
+
+    for (int i=0; i<3; i++) mission_linker[i] = -1;
+
+    if (game->has_key && game->completed_m[0] && game->completed_m[2]){
+        printf(
+            "1. Dark Lord's Castle - Final Mission: Defeat the Dark Lord."
+            "Choose an action [1-1]: "
+        );
+        mission_linker[0] = 4;
+        return;
+    }
+
+    int counter = 0;
+    for (int i=0; i<3; i++){
+        if (game->completed_m[i] == 0){
+            counter++;
+            mission_linker[counter-1] = i+1;
+            switch (i){
+
+                case 0:
+                    printf("\t%d. Rotting Swamp\n", counter);
+                    break;
+
+                case 1:
+                    printf("\t%d. Haunted Mansion\n", counter);
+                    break;
+
+                case 2:
+                    printf("\t%d. Crystal Cave\n", counter);
+                    break;
+            }
         }
+    }
+    printf("\nChoose an action [1-%d]: ", counter);
+
+}
+
+MissionState select_mission(GameState *game){
+    int mission_linker[3];
+    
+    while (1) {
+        display_mission_menu(game, mission_linker);
+        
         int user_input;
         scanf("%d", &user_input);
         clean_input();
+        
+        int mission_num = -1;
+        if (user_input >= 1 && user_input <= 3){
+            mission_num = mission_linker[user_input-1];
+        }
 
-        switch (user_input)
+        switch (mission_num)
         {
         case 1:
             if (mission_rotting_swamp(game) == LOST) return LOST;
@@ -205,6 +235,8 @@ MissionState select_mission(GameState *game){
         case 3:
             // mission_crystal_cave(game);
             break;
+        case 4:
+            // final_mission(game);
         case -1:
             return BACK;
         default:
@@ -225,7 +257,10 @@ MissionState mission_rotting_swamp(GameState *game){
     int rooms_visited = 0;
 
     while (rooms_visited < 10) {
-        printf("\n\nMission Status: Defeated %d of 3 Orc Generals.\n");
+        printf(
+            "\n\nMission Status: Defeated %d of 3 Orc Generals.\n",
+            defeated_orc_generals
+        );
 
         if (defeated_orc_generals == 3) break;
 
@@ -235,8 +270,7 @@ MissionState mission_rotting_swamp(GameState *game){
                 "\t2. Shop\n"
                 "\t3. Inventory\n"
                 "\t4. Return to Village (Pay 50 Coins)\n\n"
-            "Choose an action [1-4]: ",
-            defeated_orc_generals
+            "Choose an action [1-4]: "
         );
 
         int user_input;
@@ -391,7 +425,7 @@ MissionState explore_rotting_swamp_room(GameState *game, int *non_generals, int 
         MissionState fight_state = fight_enemy(game, enemy);
         if (fight_state == LOST){
             printf(
-                "\n\n\033[31mThe hero is defeated!\033[0m\n"
+                "\n\n\033[31mYou have been defeated!\033[0m\n"
                 "Returning back to main menu...\n"
             );
             return LOST;
