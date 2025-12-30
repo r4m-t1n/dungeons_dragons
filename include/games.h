@@ -8,7 +8,7 @@
 typedef struct GameState{
     time_t time;
     int coins;
-    unsigned int life;
+    int life;
     unsigned int completed_m[4];
     unsigned int potions;
     unsigned short extra_sword;
