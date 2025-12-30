@@ -10,7 +10,7 @@
 #include "game_menu.h"
 #include "game_utils.h"
 
-RoomDetails mission_rooms = {
+const RoomDetails mission_rooms = {
     .name = {
         R_ROOM_1_NAME, R_ROOM_2_NAME, R_ROOM_3_NAME, R_ROOM_4_NAME, R_ROOM_5_NAME, R_ROOM_6_NAME,
         H_ROOM_1_NAME, H_ROOM_2_NAME, H_ROOM_3_NAME, H_ROOM_4_NAME, H_ROOM_5_NAME, H_ROOM_6_NAME,
