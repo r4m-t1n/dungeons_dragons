@@ -245,40 +245,19 @@ MissionState select_mission(GameState *game){
     }
 }
 
-MissionState mission_rotting_swamp(GameState *game){
-
+void display_mission_progression(){
     printf(
-        "\n\033[1m=== ROTTING SWAMP ===\033[0m\n"
-        "Goals: Defeat 3 Orc Generals of the Dark Lord\n"
+        "Mission Menu :\n\n"
+            "\t1. Explore Dungeon Room\n"
+            "\t2. Shop\n"
+            "\t3. Inventory\n"
+            "\t4. Return to Village (Pay 50 Coins)\n\n"
+        "Choose an action [1-4]: "
     );
+}
 
-    int non_generals = 0;
-    int defeated_orc_generals = 0;
-    int rooms_visited = 0;
-
-    while (rooms_visited < 10) {
-        printf(
-            "\n\nMission Status: Defeated %d of 3 Orc Generals.\n",
-            defeated_orc_generals
-        );
-
-        if (defeated_orc_generals == 3) break;
-
-        printf(
-            "Mission Menu :\n\n"
-                "\t1. Explore Dungeon Room\n"
-                "\t2. Shop\n"
-                "\t3. Inventory\n"
-                "\t4. Return to Village (Pay 50 Coins)\n\n"
-            "Choose an action [1-4]: "
-        );
-
-        int user_input;
-        scanf("%d", &user_input);
-        clean_input();
-
-        switch (user_input)
-        {
+void mission_menu_handler(GameState *game, int option){
+    switch (option){
         case 0:
             if (game->potions > 0){
                 game->potions--;
@@ -291,15 +270,6 @@ MissionState mission_rotting_swamp(GameState *game){
                 );
             } else {
                 printf("\nYou don't have any health potions!\n");
-            }
-            break;
-        case 1:
-            if (game->life > 0){
-                MissionState state = explore_rotting_swamp_room(
-                    game, &non_generals, &defeated_orc_generals
-                );
-                if (state == LOST) return LOST;
-                rooms_visited++;
             }
             break;
         case 2:
@@ -322,6 +292,45 @@ MissionState mission_rotting_swamp(GameState *game){
         default:
             printf("\n\033[31mInvalid option!\033[0m\n");
             break;
+    }
+}
+
+MissionState mission_rotting_swamp(GameState *game){
+
+    printf(
+        "\n\033[1m=== ROTTING SWAMP ===\033[0m\n"
+        "Goals: Defeat 3 Orc Generals of the Dark Lord\n"
+    );
+
+    int non_generals = 0;
+    int defeated_orc_generals = 0;
+    int rooms_visited = 0;
+
+    while (rooms_visited < 10) {
+        printf(
+            "\n\nMission Status: Defeated %d of 3 Orc Generals.\n",
+            defeated_orc_generals
+        );
+
+        if (defeated_orc_generals == 3) break;
+
+        display_mission_progression();
+
+        int user_input;
+        scanf("%d", &user_input);
+        clean_input();
+
+        if (user_input == 1){
+            if (game->life > 0){
+                MissionState state = explore_rotting_swamp_room(
+                    game, &non_generals, &defeated_orc_generals
+                );
+                if (state == LOST) return LOST;
+                rooms_visited++;
+            }
+            break;
+        } else {
+            mission_menu_handler(GameState *game, int user_input);
         }
     }
 
@@ -359,6 +368,7 @@ MissionState fight_enemy(GameState *game, Enemy *enemy){
         );
 
         if (enemy->fatal_strike <= total_damage){
+            game->coins += enemy->coins;
             printf(
                 "The %s is defeated. The hero remains with \033[32m%d life points\033[0m, and receives %d coins.\n",
                 enemy->name, game->life, enemy->coins
