@@ -230,7 +230,7 @@ MissionState select_mission(GameState *game){
             if (mission_rotting_swamp(game) == LOST) return LOST;
             break;
         case 2:
-            // mission_haunted_mansion(game);
+            if (mission_haunted_mansion(game) == LOST) return LOST;
             break;
         case 3:
             // mission_crystal_cave(game);
@@ -328,7 +328,6 @@ MissionState mission_rotting_swamp(GameState *game){
                 if (state == LOST) return LOST;
                 rooms_visited++;
             }
-            break;
         } else {
             MissionState mission_menu_state = mission_menu_handler(game, user_input);
             if (mission_menu_state == WON){
@@ -353,9 +352,10 @@ MissionState mission_haunted_mansion(GameState *game){
         "\n\033[1m=== HAUNTED MANSION ===\033[0m\n"
         "Recover the key to the Dark Lord's Castle, and defeat a Greater Vampire.\n"
     );
-    
+
     bool has_vampire = false;
     bool has_demon = false;
+    int enemy_slots = 10;
     int rooms_visited = 0;
     
     while (rooms_visited < 10) {
@@ -386,12 +386,11 @@ MissionState mission_haunted_mansion(GameState *game){
         if (user_input == 1){
             if (game->life > 0){
                 MissionState state = explore_haunted_mansion_room(
-                    game, &has_vampire, &has_demon
+                    game, &enemy_slots, &has_vampire, &has_demon
                 );
                 if (state == LOST) return LOST;
                 rooms_visited++;
             }
-            break;
         } else {
             MissionState mission_menu_state = mission_menu_handler(game, user_input);
             if (mission_menu_state == WON){
@@ -538,6 +537,32 @@ MissionState explore_rotting_swamp_room(GameState *game, int *non_generals, int 
     
     return WON;
 }
-MissionState explore_haunted_mansion_room(GameState *game, bool *has_vampire, bool *has_demon){
+
+MissionState explore_haunted_mansion_room(GameState *game,
+    int *enemy_slots, bool *has_vampire, bool *has_demon){
+
+    int chosen_room = random_enemy_haunted_mansion(enemy_slots, has_vampire, has_demon);
+
+    Enemy *enemy = initialize_enemy(game, chosen_room, 1);
+
+    if (enemy->room_type == TRAP){
+        MissionState trap_state = trap_room_handler(game, enemy);
+        if (trap_state == LOST){
+            return LOST;
+        }
+
+    } else if (enemy->room_type == FIGHT){
+
+        MissionState fight_state = fight_enemy(game, enemy);
+        if (fight_state == LOST){
+            return LOST;
+        }
+        if (has_demon && !game->has_key){
+            game->has_key++;
+            printf("\033[32mYou received the key to the Dark Lord's Castle!\033[0m");
+        }
+
+    }
     
+    return WON;
 }
