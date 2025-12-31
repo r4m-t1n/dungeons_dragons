@@ -39,6 +39,9 @@ typedef struct{
 MissionState select_mission(GameState *game);
 MissionState mission_rotting_swamp(GameState *game);
 MissionState explore_rotting_swamp_room(GameState *game, int *non_generals, int *defeated_orc_generals);
+MissionState mission_haunted_mansion(GameState *game);
+MissionState explore_haunted_mansion_room(GameState *game, bool *has_vampire, bool *has_demon);
+MissionState get_state(GameState *game);
 void enter_shop(GameState *game);
 int roll_dice();
 
