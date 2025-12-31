@@ -256,7 +256,7 @@ void display_mission_progression(){
     );
 }
 
-void mission_menu_handler(GameState *game, int option){
+MissionState mission_menu_handler(GameState *game, int option){
     switch (option){
         case 0:
             if (game->potions > 0){
@@ -330,7 +330,10 @@ MissionState mission_rotting_swamp(GameState *game){
             }
             break;
         } else {
-            mission_menu_handler(GameState *game, int user_input);
+            MissionState mission_menu_state = mission_menu_handler(game, user_input);
+            if (mission_menu_state == WON){
+                return WON;
+            }
         }
     }
 
@@ -340,6 +343,69 @@ MissionState mission_rotting_swamp(GameState *game){
     );
     game->completed_m[0] = 1;
 
+    return WON;
+}
+
+
+MissionState mission_haunted_mansion(GameState *game){
+    
+    printf(
+        "\n\033[1m=== HAUNTED MANSION ===\033[0m\n"
+        "Recover the key to the Dark Lord's Castle, and defeat a Greater Vampire.\n"
+    );
+    
+    bool has_vampire = false;
+    bool has_demon = false;
+    int rooms_visited = 0;
+    
+    while (rooms_visited < 10) {
+        char text[300] = "\n\nMission Status:\n";
+        
+        if (has_vampire){
+            strcat(text, "Defeated the Greater Vampire\n");
+        } else {
+            strcat(text, "Not defeated the Greater Vampire\n");
+        }
+        
+        if (has_demon){
+            strcat(text, "Defeated the Guardian Demon\n");
+        } else {
+            strcat(text, "Not defeated the Guardian Demon\n");
+        }
+        
+        printf("%s", text);
+        
+        if (has_vampire && has_demon) break;
+        
+        display_mission_progression();
+        
+        int user_input;
+        scanf("%d", &user_input);
+        clean_input();
+        
+        if (user_input == 1){
+            if (game->life > 0){
+                MissionState state = explore_haunted_mansion_room(
+                    game, &has_vampire, &has_demon
+                );
+                if (state == LOST) return LOST;
+                rooms_visited++;
+            }
+            break;
+        } else {
+            MissionState mission_menu_state = mission_menu_handler(game, user_input);
+            if (mission_menu_state == WON){
+                return WON;
+            }
+        }
+    }
+    
+    printf(
+        "\n\033[32mYou successfully completed the Hanuted Mansion Mission!\033[0m\n"
+        "Returning back to main menu...\n"
+    );
+    game->completed_m[1] = 1;
+    
     return WON;
 }
 
@@ -355,9 +421,34 @@ int random_enemy_rotting_swamp(int *non_generals){
     return chosen_room;
 }
 
-MissionState fight_enemy(GameState *game, Enemy *enemy){
-    while (1){
+int random_enemy_haunted_mansion(int *enemy_slots, bool *has_vampire, bool *has_demon){
+    int chosen_room = roll_dice();
+    if (*enemy_slots == (!*has_vampire) + (!*has_demon)){
+        if (!*has_vampire){
+            chosen_room = 6+5;
+            *has_vampire = true;
+        } else if (!*has_demon) {
+            chosen_room = 6+6;
+            *has_demon = true;
+        }
+    } else {
+        if (chosen_room == 6+5) *has_vampire = true;
+        if (chosen_room == 6+6) *has_demon = true;
+    }
+    (*enemy_slots)--;
+    return chosen_room;
+}
 
+MissionState fight_enemy(GameState *game, Enemy *enemy){
+    
+    printf(
+        "\nThe hero encounters an enemy: \033[1m%s\033[0m"
+        "\nthe fight begins.\n",
+        enemy->name
+    );
+    
+    while (1){
+        
         int rolled_dice = roll_dice();
         int total_damage = rolled_dice + game->extra_sword;
         printf(
@@ -366,7 +457,7 @@ MissionState fight_enemy(GameState *game, Enemy *enemy){
             "Total damage with extra sword: %d\n",
             rolled_dice, total_damage
         );
-
+        
         if (enemy->fatal_strike <= total_damage){
             game->coins += enemy->coins;
             printf(
@@ -375,74 +466,78 @@ MissionState fight_enemy(GameState *game, Enemy *enemy){
             );
             return WON;
         }
-
+        
         game->life -= (enemy->damage - game->extra_armor);
         printf(
             "The %s deals \033[31m%d damage\033[0m to the hero. ",
             enemy->name, (enemy->damage - game->extra_armor)
         );
-
-        if (game->life <= 0){
-            game->life = 0;
-            return LOST;
-        }
-
+        
+        if (get_state(game) == LOST) return LOST;
+        
         printf(
             "The hero remains with \033[32m%d life points\033[0m.\n",
-             game->life
+            game->life
         );
     }
 }
 
+MissionState get_state(GameState *game){
+    if (game->life <= 0){
+        printf(
+            "\n\n\033[31mYou have been defeated!\033[0m\n"
+            "Returning back to main menu...\n"
+        );
+        return LOST;
+    }
+    return WON;
+}
+
+MissionState trap_room_handler(GameState *game, Enemy *enemy){
+    printf(
+        "\nThe hero encounters a trap: \033[1m%s\033[0m\n",
+        enemy->name
+    );
+    if (enemy->damage != 0){
+        game->life -= (enemy->damage - game->extra_armor);
+        printf(
+            "You took %d damage! "
+            "The hero remains with \033[32m%d life points\033[0m.\n",
+            (enemy->damage - game->extra_armor), game->life
+        );
+    }
+    if (enemy->coins > 0){
+        printf("You gained %d coins!", enemy->coins);
+    } else if (enemy->coins < 0){
+        printf("You lost %d coins!", enemy->coins);
+    }
+    game->coins += enemy->coins;
+    return get_state(game);
+}
+
 MissionState explore_rotting_swamp_room(GameState *game, int *non_generals, int *defeated_orc_generals){
     int chosen_room = random_enemy_rotting_swamp(non_generals);
-
+    
     Enemy *enemy = initialize_enemy(game, chosen_room, 1);
-
-    if (enemy->room_type == EMPTY){
-
-        printf("\nThe hero encounters an Empty Room!\n");
-
-    } else if (enemy->room_type == TRAP){
-
-        printf(
-            "\nThe hero encounters a trap: \033[1m%s\033[0m\n",
-            enemy->name
-        );
-        if (enemy->damage != 0){
-            game->life -= (enemy->damage - game->extra_armor);
-            printf(
-                "You took %d damage! "
-                "The hero remains with \033[32m%d life points\033[0m.\n",
-                (enemy->damage - game->extra_armor), game->life
-            );
+    
+    if (enemy->room_type == TRAP){
+        MissionState trap_state = trap_room_handler(game, enemy);
+        if (trap_state == LOST){
+            return LOST;
         }
-        if (enemy->coins > 0){
-            printf("You gained %d coins!", enemy->coins);
-        } else if (enemy->coins < 0){
-            printf("You lost %d coins!", enemy->coins);
-        }
-        game->coins += enemy->coins;
-
+        
     } else if (enemy->room_type == FIGHT){
-
-        printf(
-            "\nThe hero encounters an enemy: \033[1m%s\033[0m"
-            "\nthe fight begins.\n",
-            enemy->name
-        );
-
+        
         MissionState fight_state = fight_enemy(game, enemy);
         if (fight_state == LOST){
-            printf(
-                "\n\n\033[31mYou have been defeated!\033[0m\n"
-                "Returning back to main menu...\n"
-            );
             return LOST;
         }
         if (enemy->number == 6) (*defeated_orc_generals)++;
-
+        
     }
-
+    
     return WON;
+}
+MissionState explore_haunted_mansion_room(GameState *game, bool *has_vampire, bool *has_demon){
+    
 }
