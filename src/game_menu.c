@@ -65,7 +65,7 @@ void load_game(void){
 
 void display_village_menu(){
     printf(
-        "Village Menu :\n\n"
+        "\nVillage Menu :\n\n"
             "\t1. Start a mission\n"
             "\t2. Rest\n"
             "\t3. Inventory\n"
@@ -108,13 +108,13 @@ void start_game(GameState *game){
 
 void quick_rest(GameState *game){
     if( game->life != 20 ){
-        char *text = "Let's Rest...   Restoring Life Points...";
+        char *text = "Let's Rest...";
         int c = 0;
         printf("\n");
         while (text[c] != '\0'){
             printf("%c", text[c]);
             fflush(stdout);
-            usleep(0.2 * 1000 * 1000);
+            sleep(1);
             c++;
         }
         game->life = 20;
