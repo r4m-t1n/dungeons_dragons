@@ -41,6 +41,8 @@ MissionState mission_rotting_swamp(GameState *game);
 MissionState explore_rotting_swamp_room(GameState *game, int *non_generals, int *defeated_orc_generals);
 MissionState mission_haunted_mansion(GameState *game);
 MissionState explore_haunted_mansion_room(GameState *game, int *enemy_slots, bool *has_vampire, bool *has_demon);
+MissionState mission_crystal_cave(GameState *game);
+MissionState explore_crystal_cave_room(GameState *game, int *non_dragons);
 MissionState get_state(GameState *game);
 void enter_shop(GameState *game);
 int roll_dice();
