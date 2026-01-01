@@ -51,6 +51,33 @@ int flip_coin() {
     return rand() % 2;
 }
 
+int random_500_generator() {
+    return (rand() % 500) + 1;
+}
+
+int padovan_sequence(int n){
+    if (n==0 || n==1 || n==2){
+        return 1;
+    }
+    return padovan_sequence(n-2) + padovan_sequence(n-3);
+}
+
+int is_padovan(int num){
+    int n = 1;
+    while (1){
+        int padovan_num = padovan_sequence(n);
+
+        if (padovan_num == num){
+            return true;
+        } else if (padovan_num > num){
+            return false;
+        }
+
+        n++;
+    }
+}
+
+
 Enemy *initialize_enemy(GameState *game, int room_number, unsigned int mission){
     Enemy *enemy = malloc(sizeof(Enemy));
     if (enemy == NULL){
@@ -82,8 +109,6 @@ Enemy *initialize_enemy(GameState *game, int room_number, unsigned int mission){
             } else {
                 enemy->damage = mission_rooms.damage[index];
                 enemy->coins = 0;
-                game->life -= mission_rooms.damage[index];
-                printf("You took %d damage!", mission_rooms.damage[index]);
             }
             return enemy;
 
@@ -233,7 +258,7 @@ MissionState select_mission(GameState *game){
             if (mission_haunted_mansion(game) == LOST) return LOST;
             break;
         case 3:
-            // mission_crystal_cave(game);
+            if (mission_crystal_cave(game) == LOST) return LOST;
             break;
         case 4:
             // final_mission(game);
@@ -404,7 +429,58 @@ MissionState mission_haunted_mansion(GameState *game){
         "Returning back to main menu...\n"
     );
     game->completed_m[1] = 1;
+
+    return WON;
+}
+
+
+MissionState mission_crystal_cave(GameState *game){
     
+    printf(
+        "\n\033[1m=== Crystal Cave ===\033[0m\n"
+        "Recover the Hero's sword.\n"
+    );
+
+    int non_dragons = 0;
+    int rooms_visited = 0;
+
+    while (rooms_visited < 10) {
+        char text[200] = "\n\nMission Status:\n";
+
+        if (non_dragons){
+            break;
+        } else {
+            strcat(text, "Not recovered the Hero's sword.\n");
+        }
+
+        printf("%s", text);
+
+        display_mission_progression();
+
+        int user_input;
+        scanf("%d", &user_input);
+        clean_input();
+
+        if (user_input == 1){
+            if (game->life > 0){
+                MissionState state = explore_crystal_cave_room(game, &non_dragons);
+                if (state == LOST) return LOST;
+                rooms_visited++;
+            }
+        } else {
+            MissionState mission_menu_state = mission_menu_handler(game, user_input);
+            if (mission_menu_state == WON){
+                return WON;
+            }
+        }
+    }
+
+    printf(
+        "\n\033[32mYou successfully completed the Crystal Cave Mission!\033[0m\n"
+        "Returning back to main menu...\n"
+    );
+    game->completed_m[2] = 1;
+
     return WON;
 }
 
@@ -421,7 +497,7 @@ int random_enemy_rotting_swamp(int *non_generals){
 }
 
 int random_enemy_haunted_mansion(int *enemy_slots, bool *has_vampire, bool *has_demon){
-    int chosen_room = roll_dice();
+    int chosen_room = 6+roll_dice();
     if (*enemy_slots == (!*has_vampire) + (!*has_demon)){
         if (!*has_vampire){
             chosen_room = 6+5;
@@ -435,6 +511,18 @@ int random_enemy_haunted_mansion(int *enemy_slots, bool *has_vampire, bool *has_
         if (chosen_room == 6+6) *has_demon = true;
     }
     (*enemy_slots)--;
+    return chosen_room;
+}
+
+int random_enemy_crystal_cave(int *non_dragons){
+    int chosen_room;
+    int enemy_slots = 10 - (*non_dragons);
+    if (enemy_slots > 1){
+        chosen_room = 12+roll_dice();
+        (*non_dragons)++;
+    } else {
+        chosen_room = 12+6;
+    }
     return chosen_room;
 }
 
@@ -464,6 +552,33 @@ MissionState fight_enemy(GameState *game, Enemy *enemy){
                 enemy->name, game->life, enemy->coins
             );
             return WON;
+        }
+
+        if (enemy->number == 12+6){
+
+            int random_number = random_500_generator();
+
+            printf(
+                "BEFORE I DEAL 10 DAMAGE TO YOU, I'LL GIVE YOU A CHANCE TO TELL ME IF THIS NUMBER IS FROM PADOVAN SEQUENCE!\n"
+                "The number: %d\n"
+                "\033[1m[Yes/No]\033[0m\n",
+                random_number
+            );
+
+            char user_input[10];
+            scanf("%9s", user_input);
+            clean_input();
+            printf("\n");
+
+
+            if (
+                (strcmp(user_input, "Yes")==0 || strcmp(user_input, "yes")==0)
+                && is_padovan(random_number) ){
+                printf("CORRECT! I DEAL YOU NO DAMAGE THIS TIME...\n");
+                continue;
+            } else {
+                printf("WRONG!!!\n");
+            }
         }
         
         game->life -= (enemy->damage - game->extra_armor);
@@ -565,4 +680,35 @@ MissionState explore_haunted_mansion_room(GameState *game,
     }
     
     return WON;
+}
+
+MissionState explore_crystal_cave_room(GameState *game, int *non_dragons){
+
+    int chosen_room = random_enemy_crystal_cave(non_dragons);
+
+    Enemy *enemy = initialize_enemy(game, chosen_room, 1);
+
+    if (enemy->room_type == EMPTY){
+
+         printf("\nThe hero encounters an Empty Room!\n");
+
+    } else if (enemy->room_type == TRAP){
+        MissionState trap_state = trap_room_handler(game, enemy);
+        if (trap_state == LOST){
+            return LOST;
+        }
+
+    } else if (enemy->room_type == FIGHT){
+
+        MissionState fight_state = fight_enemy(game, enemy);
+        if (fight_state == LOST){
+            return LOST;
+        }
+        if (enemy->number == 12+6){
+            game->extra_sword = 2;
+            printf("\033[32mYou received the Hero's sword and gained permanent \033[32m+2 attack damage\033[0m!\033[0m");
+            return WON;
+        }
+
+    }
 }
