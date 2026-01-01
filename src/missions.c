@@ -34,7 +34,7 @@ const RoomDetails mission_rooms = {
     .damage = {
         R_ROOM_1_DAMAGE, R_ROOM_2_DAMAGE, R_ROOM_3_DAMAGE, R_ROOM_4_DAMAGE, R_ROOM_5_DAMAGE, R_ROOM_6_DAMAGE,
         H_ROOM_1_DAMAGE, H_ROOM_2_DAMAGE, H_ROOM_3_DAMAGE, H_ROOM_4_DAMAGE, H_ROOM_5_DAMAGE, H_ROOM_6_DAMAGE,
-        C_ROOM_1_DAMAGE, C_ROOM_2_DAMAGE, C_ROOM_3_DAMAGE, C_ROOM_4_DAMAGE, C_ROOM_5_DAMAGE, C_ROOM_6_DAMAGE
+        C_ROOM_1_DAMAGE, C_ROOM_2_DAMAGE, C_ROOM_3_DAMAGE, C_ROOM_4_CODE, C_ROOM_5_DAMAGE, C_ROOM_6_DAMAGE
     },
     .coins = {
         R_ROOM_1_COINS, R_ROOM_2_COINS, R_ROOM_3_COINS, R_ROOM_4_COINS, R_ROOM_5_COINS, R_ROOM_6_COINS,
@@ -56,7 +56,7 @@ int random_500_generator() {
 }
 
 FinalFightMoves shield_magic_sword(){
-    return (rand() % 2);
+    return (rand() % 3);
 }
 
 int padovan_sequence(int n){
@@ -83,13 +83,13 @@ int is_padovan(int num){
 
 char *name_of_move(FinalFightMoves num){
     switch (num){
-        case 0:
+        case SHIELD:
             return "Shield";
         
-        case 1:
+        case MAGIC:
             return "Magic";
         
-        case 2:
+        case SWORD:
             return "Sword";
         
         default:
@@ -127,7 +127,7 @@ Enemy *initialize_enemy(GameState *game, int room_number, unsigned int mission){
                 enemy->coins = mission_rooms.coins[index];
                 enemy->damage = 0;
             } else {
-                enemy->damage = mission_rooms.damage[index];
+                enemy->damage = C_ROOM_4_DAMAGE;
                 enemy->coins = 0;
             }
             return enemy;
@@ -165,7 +165,7 @@ void enter_shop(GameState *game){
             if (game->coins - 4 >= 0){
                 game->coins -= 4;
                 printf(
-                    "\n\n\033[32mSuccessfuly purchased!\033[0m\nYou now have %d Health Potions.\n",
+                    "\n\n\033[32msuccessfully purchased!\033[0m\nYou now have %d Health Potions.\n",
                     ++game->potions
                 );
                 break;
@@ -183,7 +183,7 @@ void enter_shop(GameState *game){
             if (game->coins - 5 >= 0){
                 game->coins -= 5;
                 game->extra_sword = 1;
-                printf("\n\n\033[32mSuccessfuly purchased!\033[0m\nYour sword now has +1 damage.\n");
+                printf("\n\n\033[32msuccessfully purchased!\033[0m\nYour sword now has +1 damage.\n");
                 break;
             }
             printf(
@@ -199,7 +199,7 @@ void enter_shop(GameState *game){
             if (game->coins - 10 >= 0){
                 game->coins -= 10;
                 game->extra_armor = 1;
-                printf("\n\n\033[32mSuccessfuly purchased!\033[0m\nYou now receive 1 less damage.\n");
+                printf("\n\n\033[32msuccessfully purchased!\033[0m\nYou now receive 1 less damage.\n");
                 break;
             }
             printf(
@@ -468,7 +468,7 @@ MissionState mission_crystal_cave(GameState *game){
     while (rooms_visited < 10) {
         char text[200] = "\n\nMission Status:\n";
 
-        if (non_dragons){
+        if (rooms_visited != non_dragons){
             break;
         } else {
             strcat(text, "Not recovered the Hero's sword.\n");
@@ -644,7 +644,7 @@ MissionState trap_room_handler(GameState *game, Enemy *enemy){
     if (enemy->coins > 0){
         printf("You gained %d coins!", enemy->coins);
     } else if (enemy->coins < 0){
-        printf("You lost %d coins!", enemy->coins);
+        printf("You lost %d coins!", enemy->coins*-1);
     }
     game->coins += enemy->coins;
     return get_state(game);
@@ -693,7 +693,7 @@ MissionState explore_haunted_mansion_room(GameState *game,
         if (fight_state == LOST){
             return LOST;
         }
-        if (has_demon && !game->has_key){
+        if (*has_demon && !game->has_key){
             game->has_key++;
             printf("\033[32mYou received the key to the Dark Lord's Castle!\033[0m");
         }
@@ -762,6 +762,8 @@ MissionState mission_dark_lord(GameState *game){
             lords_move_name
         );
 
+        user_input--;
+
         if (user_input == random_chosen){
 
             printf(
@@ -770,7 +772,10 @@ MissionState mission_dark_lord(GameState *game){
             );
             continue;
 
-        } else if ((user_input-random_chosen == -1) || (user_input-random_chosen == 0)){
+        } else if (
+            (user_input == SHIELD && random_chosen == MAGIC) ||
+            (user_input == MAGIC && random_chosen == SWORD) ||
+            (user_input == SWORD && random_chosen == SHIELD)){
 
             printf(
                 "The hero couldn't defend himself from the %s of the Dark Lord. "
