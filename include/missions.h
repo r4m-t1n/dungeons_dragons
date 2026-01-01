@@ -18,6 +18,12 @@ typedef enum{
     EMPTY
 } RoomTypes;
 
+typedef enum{
+    SHIELD,
+    MAGIC,
+    SWORD
+} FinalFightMoves;
+
 typedef struct {
     char name[20];
     unsigned int number;
@@ -43,6 +49,7 @@ MissionState mission_haunted_mansion(GameState *game);
 MissionState explore_haunted_mansion_room(GameState *game, int *enemy_slots, bool *has_vampire, bool *has_demon);
 MissionState mission_crystal_cave(GameState *game);
 MissionState explore_crystal_cave_room(GameState *game, int *non_dragons);
+MissionState mission_dark_lord(GameState *game);
 MissionState get_state(GameState *game);
 void enter_shop(GameState *game);
 int roll_dice();

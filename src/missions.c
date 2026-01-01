@@ -55,6 +55,10 @@ int random_500_generator() {
     return (rand() % 500) + 1;
 }
 
+FinalFightMoves shield_magic_sword(){
+    return (rand() % 2);
+}
+
 int padovan_sequence(int n){
     if (n==0 || n==1 || n==2){
         return 1;
@@ -74,6 +78,22 @@ int is_padovan(int num){
         }
 
         n++;
+    }
+}
+
+char *name_of_move(FinalFightMoves num){
+    switch (num){
+        case 0:
+            return "Shield";
+        
+        case 1:
+            return "Magic";
+        
+        case 2:
+            return "Sword";
+        
+        default:
+            break;
     }
 }
 
@@ -261,7 +281,8 @@ MissionState select_mission(GameState *game){
             if (mission_crystal_cave(game) == LOST) return LOST;
             break;
         case 4:
-            // final_mission(game);
+            if (mission_dark_lord(game) == LOST) return LOST;
+            else return WON;
         case -1:
             return BACK;
         default:
@@ -710,5 +731,75 @@ MissionState explore_crystal_cave_room(GameState *game, int *non_dragons){
             return WON;
         }
 
+    }
+}
+
+MissionState mission_dark_lord(GameState *game){
+    int won_rounds = 0;
+    int current_round = 1;
+    while (1){
+        printf(
+            "Final Fight | Round %d of 5 | Hero %d - Dark Lord %d.\n\n"
+            "Available moves\n"
+                "\t1. Shield\n"
+                "\t2. Magic\n"
+                "\t3. Sword\n"
+            "\nSelect one of the menu options [1-3]: ",
+            current_round, won_rounds, current_round - won_rounds
+        );
+
+        int user_input;
+        scanf("%d", &user_input);
+        clean_input();
+
+        
+        FinalFightMoves random_chosen = shield_magic_sword();
+        char lords_move_name[10];
+        strcpy(lords_move_name, name_of_move(random_chosen));
+
+        printf(
+            "The Dark Lord has meanwhile chosen the %s .\n",
+            lords_move_name
+        );
+
+        if (user_input == random_chosen){
+
+            printf(
+                "%s against %s!\nRound draw!\n\n",
+                lords_move_name, lords_move_name
+            );
+            continue;
+
+        } else if ((user_input-random_chosen == -1) || (user_input-random_chosen == 0)){
+
+            printf(
+                "The hero couldn't defend himself from the %s of the Dark Lord. "
+                "\033[31mThe hero loses the Round.\033[0m\n",
+                lords_move_name
+            );
+
+        } else {
+
+            printf(
+                "The hero defends himself from the %s of the Dark Lord. "
+                "\033[32mThe hero wins the Round.\033[0m\n",
+                lords_move_name
+            );
+            won_rounds++;
+
+        }
+
+        if (current_round-won_rounds>2){
+            game->life = 0;
+            return get_state(game);
+        } else if (won_rounds == 3){
+            printf(
+                "\n\033[32mVICTORY!!!\033[0m\ncongratulations! You \033[32mWON\033[0m the game!\n"
+                "Returning back to main menu...\n"
+            );
+            return WON;
+        }
+
+        current_round++;
     }
 }
