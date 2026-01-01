@@ -119,7 +119,7 @@
 #define C_ROOM_4_NAME "Mysterious Chest"
 #define C_ROOM_4_TYPE TRAP
 #define C_ROOM_4_FATAL 0
-#define C_ROOM_4_DAMAGE 2
+#define C_ROOM_4_DAMAGE -200
 #define C_ROOM_4_COINS 10
 
 
