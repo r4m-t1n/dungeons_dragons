@@ -15,6 +15,10 @@ void cheats_menu(){
         scanf("%d", &selected_game);
         clean_input();
 
+        if (selected_game == -1){
+            return;
+        }
+
         SaveNode *saved_node = search_game(selected_game);
         if (saved_node == NULL){
             printf("ERROR: the game number you entered does not exist.\n\n");
@@ -54,6 +58,9 @@ void cheats_menu(){
             modify_key(saved_node);
             break;
 
+        case -1:
+            return;
+
         default:
             break;
         }
@@ -91,8 +98,11 @@ void modify_coin(SaveNode *saved_node){
 }
 
 void modify_key(SaveNode *saved_node){
-    
-    saved_node->state.has_key = !saved_node->state.has_key;
+
+    saved_node->state.has_key = true;
+    saved_node->state.completed_m[0] = 1;
+    saved_node->state.completed_m[1] = 1;
+    saved_node->state.completed_m[2] = 1;
 
     char *key_available = "Not available";
     if (saved_node->state.has_key) key_available = "Available";
