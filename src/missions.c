@@ -664,6 +664,7 @@ MissionState explore_rotting_swamp_room(GameState *game, int *non_generals, int 
     
     if (enemy->room_type == TRAP){
         MissionState trap_state = trap_room_handler(game, enemy);
+        free(enemy);
         if (trap_state == LOST){
             return LOST;
         }
@@ -672,9 +673,11 @@ MissionState explore_rotting_swamp_room(GameState *game, int *non_generals, int 
         
         MissionState fight_state = fight_enemy(game, enemy);
         if (fight_state == LOST){
+            free(enemy);
             return LOST;
         }
         if (enemy->number == 6) (*defeated_orc_generals)++;
+        free(enemy);
         
     }
     
@@ -690,6 +693,7 @@ MissionState explore_haunted_mansion_room(GameState *game,
 
     if (enemy->room_type == TRAP){
         MissionState trap_state = trap_room_handler(game, enemy);
+        free(enemy);
         if (trap_state == LOST){
             return LOST;
         }
@@ -697,6 +701,7 @@ MissionState explore_haunted_mansion_room(GameState *game,
     } else if (enemy->room_type == FIGHT){
 
         MissionState fight_state = fight_enemy(game, enemy);
+        free(enemy);
         if (fight_state == LOST){
             return LOST;
         }
@@ -718,10 +723,12 @@ MissionState explore_crystal_cave_room(GameState *game, int *non_dragons){
 
     if (enemy->room_type == EMPTY){
 
-         printf("\nThe hero encounters an Empty Room!\n");
+        printf("\nThe hero encounters an Empty Room!\n");
+        free(enemy);
 
     } else if (enemy->room_type == TRAP){
         MissionState trap_state = trap_room_handler(game, enemy);
+        free(enemy);
         if (trap_state == LOST){
             return LOST;
         }
@@ -730,15 +737,19 @@ MissionState explore_crystal_cave_room(GameState *game, int *non_dragons){
 
         MissionState fight_state = fight_enemy(game, enemy);
         if (fight_state == LOST){
+            free(enemy);
             return LOST;
         }
         if (enemy->number == 12+6){
+            free(enemy);
             game->extra_sword = 2;
             printf("\033[32mYou received the Hero's sword and gained permanent \033[32m+2 attack damage\033[0m!\033[0m");
             return WON;
         }
+        free(enemy);
 
     }
+    return BACK;
 }
 
 MissionState mission_dark_lord(GameState *game){
