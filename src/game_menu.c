@@ -33,7 +33,7 @@ void create_new_game(){
     return;
 }
 
-void load_game(void){
+void load_game_menu(){
     while (1) {
         if (print_saved_games() == 0){
             return;
@@ -48,17 +48,76 @@ void load_game(void){
             continue;
         }
 
-        GameState *current_game = malloc(sizeof(GameState));
+        printf(
+            "Select one of the following actions:\n"
+            "\t1. Load\n"
+            "\t2. Delete\n"
+            "Insert the action [1-2]: "
+        );
 
-        if (!current_game){
-            printf("ERROR: Can't allocate memory.\n");
+        int user_input;
+        scanf("%d", &user_input);
+
+        switch (user_input){
+            case 1:
+                load_game(saved_game);
+                return;
+            case 2:
+                delete_game(&saved_games, saved_game);
+                return;
+            default:
+                break;
+        }
+    }
+}
+
+void load_game(SaveNode *saved_game){
+
+    GameState *current_game = malloc(sizeof(GameState));
+
+    if (!current_game){
+        printf("ERROR: Can't allocate memory.\n");
+        return;
+    }
+
+    *current_game = saved_game->state;
+
+    start_game(current_game);
+    return;
+}
+
+void delete_game(SaveNode **head, SaveNode *saved_game){
+    char user_input[10];
+    
+    while (1){
+        printf(
+            "Are you sure you want to permanently delete the save? \033[1m[Yes/No]\033[0m\n"
+        );
+        scanf("%9s", user_input);
+
+        if (strcmp(user_input, "Yes") == 0){
+            if (*head == saved_game){
+                *head = saved_game->next;
+                free(saved_game);
+                return;
+            }
+
+            SaveNode *temp = *head;
+            while (temp->next && temp->next != saved_game){
+                temp = temp->next;
+            }
+
+            if (temp->next == saved_game){
+                temp->next = saved_game->next;
+                free(saved_game);
+            }
+            return;
+        } else if (strcmp(user_input, "No") == 0){
+            return;
+        } else {
+            printf("\n\033[31mInvalid input.\033[0m\n");
             return;
         }
-
-        *current_game = saved_game->state;
-
-        start_game(current_game);
-        return;
     }
 }
 
@@ -174,11 +233,9 @@ void exit_game(GameState *game){
             free(game);
             return;
         } else if (strcmp(input, "No") == 0){
-            start_game(game);
             return;
         } else {
-            printf("\n\033[31mInvalid input\033[0m\n.");
-            start_game(game);
+            printf("\n\033[31mInvalid input.\033[0m\n");
             return;
         }
     }

@@ -46,7 +46,7 @@ int main(void){
                 create_new_game();
                 break;
             case '2':
-                load_game();
+                load_game_menu();
                 break;
             case '3':
                 if (cheats_enabled){
