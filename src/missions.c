@@ -222,7 +222,7 @@ void display_mission_menu(GameState *game, int *mission_linker){
 
     if (game->has_key && game->completed_m[0] && game->completed_m[2]){
         printf(
-            "1. Dark Lord's Castle - Final Mission: Defeat the Dark Lord."
+            "1. Dark Lord's Castle - Final Mission: Defeat the Dark Lord.\n"
             "Choose an action [1-1]: "
         );
         mission_linker[0] = 4;
@@ -377,6 +377,7 @@ MissionState mission_rotting_swamp(GameState *game){
         } else {
             MissionState mission_menu_state = mission_menu_handler(game, user_input);
             if (mission_menu_state == WON){
+                game->completed_m[0] = 1;
                 return WON;
             }
         }
@@ -440,6 +441,9 @@ MissionState mission_haunted_mansion(GameState *game){
         } else {
             MissionState mission_menu_state = mission_menu_handler(game, user_input);
             if (mission_menu_state == WON){
+                game->completed_m[1] = 1;
+                game->has_key++;
+                printf("\033[32mYou received the key to the Dark Lord's Castle!\033[0m\n");
                 return WON;
             }
         }
@@ -491,6 +495,9 @@ MissionState mission_crystal_cave(GameState *game){
         } else {
             MissionState mission_menu_state = mission_menu_handler(game, user_input);
             if (mission_menu_state == WON){
+                game->completed_m[2] = 1;
+                game->extra_sword = 2;
+                printf("\033[32mYou received the Hero's sword and gained permanent \033[32m+2 attack damage\033[0m!\033[0m\n");
                 return WON;
             }
         }
