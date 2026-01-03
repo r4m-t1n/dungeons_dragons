@@ -5,7 +5,9 @@
 #include "games.h"
 
 void create_new_game();
-void load_game();
+void load_game_menu();
+void load_game(SaveNode *saved_game);
+void delete_game(SaveNode **head, SaveNode *saved_game);
 
 void start_game(GameState *game);
 void quick_rest(GameState *game);
