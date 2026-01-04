@@ -8,5 +8,6 @@ int print_saved_games(void);
 SaveNode *search_game(int num);
 int total_items(GameState *game);
 void clean_input();
+int is_digit(char num);
 
 #endif

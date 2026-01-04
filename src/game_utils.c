@@ -68,3 +68,7 @@ void clean_input(){
     int ch;
     while ((ch = getchar()) != '\n' && ch != EOF);
 }
+
+int is_digit(char num){
+    return (num >= '0' && num <= '9');
+}
