@@ -100,15 +100,16 @@ void load_game(SaveNode *saved_game){
 }
 
 void delete_game(SaveNode **head, SaveNode *saved_game){
-    char user_input[10];
+    char user_input[4];
     
     while (1){
         printf(
             "Are you sure you want to permanently delete the save? \033[1m[Yes/No]\033[0m\n"
         );
-        scanf("%9s", user_input);
+        scanf("%3s", user_input);
+        clean_input();
 
-        if (strcmp(user_input, "Yes") == 0){
+        if (strcasecmp(user_input, "Yes")==0 || strcasecmp(user_input, "Y")==0){
             if (*head == saved_game){
                 *head = saved_game->next;
                 free(saved_game);
@@ -125,11 +126,11 @@ void delete_game(SaveNode **head, SaveNode *saved_game){
                 free(saved_game);
             }
             return;
-        } else if (strcmp(user_input, "No") == 0){
+        } else if (strcasecmp(user_input, "No")==0 || strcasecmp(user_input, "N")==0){
             return;
         } else {
             printf("\n\033[31mInvalid input.\033[0m\n");
-            return;
+            continue;
         }
     }
 }
@@ -180,7 +181,7 @@ void start_game(GameState *game){
 
 void quick_rest(GameState *game){
     if( game->life != 20 ){
-        char *text = "Let's Rest...";
+        const char *text = "Let's Rest...";
         int c = 0;
         printf("\n");
         while (text[c] != '\0'){
@@ -236,20 +237,20 @@ void save_game(GameState *current_game) {
 
 void exit_game(GameState *game){
     printf("You are exiting the game, remember to \033[1msave\033[0m the game so as not to lose your progress.");
-    char input[8];
+    char user_input[4];
     while (1){
         printf("\nAre you sure to proceed? \033[1m[Yes/No]\033[0m\n");
-        scanf("%7s", input);
+        scanf("%3s", user_input);
         clean_input();
         
-        if (strcmp(input, "Yes") == 0){
+        if (strcasecmp(user_input, "Yes")==0 || strcasecmp(user_input, "Y")==0){
             free(game);
             return;
-        } else if (strcmp(input, "No") == 0){
+        } else if (strcasecmp(user_input, "No")==0 || strcasecmp(user_input, "N")==0){
             return;
         } else {
             printf("\n\033[31mInvalid input.\033[0m\n");
-            return;
+            continue;
         }
     }
 }

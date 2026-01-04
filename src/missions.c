@@ -102,6 +102,7 @@ Enemy *initialize_enemy(GameState *game, int room_number, unsigned int mission){
     Enemy *enemy = malloc(sizeof(Enemy));
     if (enemy == NULL){
         printf("ERROR: Failed to allocate memory.");
+        return NULL;
     }
 
     int index = ( ( (mission-1) * 6) + room_number) - 1;
@@ -414,7 +415,7 @@ MissionState mission_haunted_mansion(GameState *game){
     int rooms_visited = 0;
     
     while (rooms_visited < 10) {
-        char text[300] = "\n\nMission Status:\n";
+        char text[100] = "\n\nMission Status:\n";
         
         if (has_vampire){
             strcat(text, "Defeated the Greater Vampire\n");
@@ -483,7 +484,7 @@ MissionState mission_crystal_cave(GameState *game){
     int rooms_visited = 0;
 
     while (rooms_visited < 10) {
-        char text[200] = "\n\nMission Status:\n";
+        char text[80] = "\n\nMission Status:\n";
 
         if (rooms_visited != non_dragons){
             break;
@@ -611,14 +612,14 @@ MissionState fight_enemy(GameState *game, Enemy *enemy){
                 random_number
             );
 
-            char user_input[10];
-            scanf("%9s", user_input);
+            char user_input[4];
+            scanf("%3s", user_input);
             clean_input();
             printf("\n");
 
 
             if (
-                (strcmp(user_input, "Yes")==0 || strcmp(user_input, "yes")==0)
+                (strcasecmp(user_input, "Yes")==0 || strcasecmp(user_input, "Y")==0)
                 && is_padovan(random_number) ){
                 printf("CORRECT! I DEAL YOU NO DAMAGE THIS TIME...\n");
                 continue;
@@ -679,6 +680,9 @@ MissionState explore_rotting_swamp_room(GameState *game, int *non_generals, int 
     int chosen_room = random_enemy_rotting_swamp(non_generals);
     
     Enemy *enemy = initialize_enemy(game, chosen_room, 1);
+    if (enemy == NULL){
+        return LOST;
+    }
     
     if (enemy->room_type == TRAP){
         MissionState trap_state = trap_room_handler(game, enemy);
@@ -708,6 +712,9 @@ MissionState explore_haunted_mansion_room(GameState *game,
     int chosen_room = random_enemy_haunted_mansion(enemy_slots, has_vampire, has_demon);
 
     Enemy *enemy = initialize_enemy(game, chosen_room, 1);
+    if (enemy == NULL){
+        return LOST;
+    }
 
     if (enemy->room_type == TRAP){
         MissionState trap_state = trap_room_handler(game, enemy);
@@ -738,6 +745,9 @@ MissionState explore_crystal_cave_room(GameState *game, int *non_dragons){
     int chosen_room = random_enemy_crystal_cave(non_dragons);
 
     Enemy *enemy = initialize_enemy(game, chosen_room, 1);
+    if (enemy == NULL){
+        return LOST;
+    }
 
     if (enemy->room_type == EMPTY){
 

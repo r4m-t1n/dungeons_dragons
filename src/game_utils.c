@@ -15,8 +15,8 @@ int print_saved_games(void){
     int c = 0;
     while (current != NULL){
         c++;
-        char time[20];
-        strftime(time, 20, "%d-%m-%Y %H:%M:%S", localtime(&current->state.time));
+        char time[25];
+        strftime(time, 25, "%d-%m-%Y %H:%M:%S", localtime(&current->state.time));
 
         int count_missions = 0;
         for (int i=0; i<4; i++){
