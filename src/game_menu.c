@@ -39,8 +39,18 @@ void load_game_menu(){
             return;
         }
 
-        int selected_game;
-        scanf("%d", &selected_game);
+        char selected_option;
+        scanf(" %c", &selected_option);
+        clean_input();
+
+        if (selected_option == 'b'){
+            return;
+        } else if (!is_digit(selected_option)){
+            printf("\n\033[31mInvalid option!\033[0m\n\n");
+            continue;
+        }
+
+        int selected_game = selected_option - '0';
 
         SaveNode *saved_game = search_game(selected_game);
         if (saved_game == NULL){
@@ -55,15 +65,18 @@ void load_game_menu(){
             "Insert the action [1-2]: "
         );
 
-        int user_input;
-        scanf("%d", &user_input);
+        char user_input;
+        scanf(" %c", &user_input);
+        clean_input();
 
         switch (user_input){
-            case 1:
+            case '1':
                 load_game(saved_game);
                 return;
-            case 2:
+            case '2':
                 delete_game(&saved_games, saved_game);
+                return;
+            case 'b':
                 return;
             default:
                 break;
@@ -138,25 +151,25 @@ void start_game(GameState *game){
     while (1) {
         display_village_menu();
 
-        int user_input;
-        scanf("%d", &user_input);
+        char user_input;
+        scanf(" %c", &user_input);
         clean_input();
 
         switch (user_input)
         {
-        case 1:
+        case '1':
             if (select_mission(game) == LOST) return;
             break;
-        case 2:
+        case '2':
             quick_rest(game);
             break;
-        case 3:
+        case '3':
             display_inventory(game);
             break;
-        case 4:
+        case '4':
             save_game(game);
             break;
-        case 5:
+        case '5':
             exit_game(game);
             return;
         default:

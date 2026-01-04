@@ -155,13 +155,13 @@ void enter_shop(GameState *game){
                 "----------------------------------------------------------------------------------------------------\n"
                 "\nChoose an item to purchase [1-3]: "
         );
-        int user_input;
-        scanf("%d", &user_input);
+        char user_input;
+        scanf(" %c", &user_input);
         clean_input();
 
         switch (user_input)
         {
-        case 1:
+        case '1':
             if (game->coins - 4 >= 0){
                 game->coins -= 4;
                 printf(
@@ -175,7 +175,7 @@ void enter_shop(GameState *game){
                 game->coins
             );
             return;
-        case 2:
+        case '2':
             if (game->extra_sword != 0){
                printf("\n\n\033[34mYou already have the extra sword damage!\033[0m\n"); 
                break;
@@ -191,7 +191,7 @@ void enter_shop(GameState *game){
                 game->coins
             );
             return;
-        case 3:
+        case '3':
             if (game->extra_armor != 0){
                printf("\n\n\033[34mYou already have the extra armor!\033[0m\n");
                break;
@@ -207,7 +207,7 @@ void enter_shop(GameState *game){
                 game->coins
             );
             return;
-        case -1:
+        case 'b':
             return;
         default:
             break;
@@ -260,13 +260,17 @@ MissionState select_mission(GameState *game){
     while (1) {
         display_mission_menu(game, mission_linker);
         
-        int user_input;
-        scanf("%d", &user_input);
+        char user_input;
+        scanf(" %c", &user_input);
         clean_input();
+
+        if (user_input == 'b'){
+            return BACK;
+        }
         
         int mission_num = -1;
-        if (user_input >= 1 && user_input <= 3){
-            mission_num = mission_linker[user_input-1];
+        if (user_input >= '1' && user_input <= '3'){
+            mission_num = mission_linker[user_input-'1'];
         }
 
         switch (mission_num)
@@ -283,8 +287,6 @@ MissionState select_mission(GameState *game){
         case 4:
             if (mission_dark_lord(game) == LOST) return LOST;
             else return WON;
-        case -1:
-            return BACK;
         default:
             break;
         }
@@ -302,9 +304,9 @@ void display_mission_progression(){
     );
 }
 
-MissionState mission_menu_handler(GameState *game, int option){
+MissionState mission_menu_handler(GameState *game, char option){
     switch (option){
-        case 0:
+        case '0':
             if (game->potions > 0){
                 game->potions--;
                 int rolled_dice = roll_dice();
@@ -318,14 +320,14 @@ MissionState mission_menu_handler(GameState *game, int option){
                 printf("\nYou don't have any health potions!\n");
             }
             break;
-        case 2:
+        case '2':
             enter_shop(game);
             break;
-        case 3:
+        case '3':
             display_inventory(game);
             printf("To use your health potions, enter \"0\"");
             break;
-        case 4:
+        case '4':
             if (game->coins >= 50){
                 game->coins -= 50;
                 printf("\n\033[33mYou paid 50 coins to return to the village.\033[0m\n\n");
@@ -339,6 +341,7 @@ MissionState mission_menu_handler(GameState *game, int option){
             printf("\n\033[31mInvalid option!\033[0m\n");
             break;
     }
+    return BACK;
 }
 
 MissionState mission_rotting_swamp(GameState *game){
@@ -362,11 +365,16 @@ MissionState mission_rotting_swamp(GameState *game){
 
         display_mission_progression();
 
-        int user_input;
-        scanf("%d", &user_input);
+        char user_input;
+        scanf(" %c", &user_input);
         clean_input();
 
-        if (user_input == 1){
+        if (!is_digit(user_input)){
+            printf("\n\033[31mInvalid option!\033[0m\n");
+            continue;
+        }
+
+        if (user_input == '1'){
             if (game->life > 0){
                 MissionState state = explore_rotting_swamp_room(
                     game, &non_generals, &defeated_orc_generals
@@ -426,11 +434,16 @@ MissionState mission_haunted_mansion(GameState *game){
         
         display_mission_progression();
         
-        int user_input;
-        scanf("%d", &user_input);
+        char user_input;
+        scanf(" %c", &user_input);
         clean_input();
-        
-        if (user_input == 1){
+
+        if (!is_digit(user_input)){
+            printf("\n\033[31mInvalid option!\033[0m\n");
+            continue;
+        }
+
+        if (user_input == '1'){
             if (game->life > 0){
                 MissionState state = explore_haunted_mansion_room(
                     game, &enemy_slots, &has_vampire, &has_demon
@@ -482,11 +495,16 @@ MissionState mission_crystal_cave(GameState *game){
 
         display_mission_progression();
 
-        int user_input;
-        scanf("%d", &user_input);
+        char user_input;
+        scanf(" %c", &user_input);
         clean_input();
 
-        if (user_input == 1){
+        if (!is_digit(user_input)){
+            printf("\n\033[31mInvalid option!\033[0m\n");
+            continue;
+        }
+
+        if (user_input == '1'){
             if (game->life > 0){
                 MissionState state = explore_crystal_cave_room(game, &non_dragons);
                 if (state == LOST) return LOST;
@@ -766,11 +784,15 @@ MissionState mission_dark_lord(GameState *game){
             current_round, won_rounds, current_round - won_rounds
         );
 
-        int user_input;
-        scanf("%d", &user_input);
+        char user_input;
+        scanf(" %c", &user_input);
         clean_input();
 
-        
+        if (user_input != '1' && user_input != '2' && user_input != '3'){
+            printf("\n\033[31mInvalid option!\033[0m\n");
+            continue;
+        }
+
         FinalFightMoves random_chosen = shield_magic_sword();
         char lords_move_name[10];
         strcpy(lords_move_name, name_of_move(random_chosen));
@@ -779,8 +801,6 @@ MissionState mission_dark_lord(GameState *game){
             "The Dark Lord has meanwhile chosen the %s .\n",
             lords_move_name
         );
-
-        user_input--;
 
         if (user_input == random_chosen){
 

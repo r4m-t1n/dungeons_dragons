@@ -19,9 +19,9 @@ typedef enum{
 } RoomTypes;
 
 typedef enum{
-    SHIELD,
-    MAGIC,
-    SWORD
+    SHIELD = '1',
+    MAGIC = '2',
+    SWORD = '3'
 } FinalFightMoves;
 
 typedef struct {

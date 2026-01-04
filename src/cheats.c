@@ -11,13 +11,18 @@ void cheats_menu(){
             return;
         }
 
-        int selected_game;
-        scanf("%d", &selected_game);
+        char selected_option;
+        scanf(" %c", &selected_option);
         clean_input();
 
-        if (selected_game == -1){
+        if (selected_option == 'b'){
             return;
+        } else if (!is_digit(selected_option)){
+            printf("\n\033[31mInvalid input!\033[0m\n");
+            continue;
         }
+
+        int selected_game = selected_option - '0';
 
         SaveNode *saved_node = search_game(selected_game);
         if (saved_node == NULL){
@@ -40,25 +45,24 @@ void cheats_menu(){
             );
         }
 
-        int selected_option;
-        scanf("%d", &selected_option);
+        scanf(" %c", &selected_option);
         clean_input();
 
         switch (selected_option)
         {
-        case 1:
+        case '1':
             modify_life(saved_node);
             break;
 
-        case 2:
+        case '2':
             modify_coin(saved_node);
             break;
 
-        case 3:
+        case '3':
             modify_key(saved_node);
             break;
 
-        case -1:
+        case 'b':
             return;
 
         default:
@@ -70,31 +74,49 @@ void cheats_menu(){
 void modify_life(SaveNode *saved_node){
     int life_point;
 
-    printf("\nEnter the life-points between 1-20: ");
-    scanf("%d", &life_point);
-    clean_input();
+    while (1){
 
-    if (life_point < 1 || life_point > 20){
-        printf("%d is not a valid life-point!\n", life_point);
+        printf("\nEnter the life-points between 1-20: ");
+        if (scanf("%d", &life_point) != 1){
+            printf("\n\033[31mInvalid input!\033[0m\n");
+            clean_input();
+            continue;
+        }
+
+        clean_input();
+
+        if (life_point < 1 || life_point > 20){
+            printf("%d is not a valid life-point!\n", life_point);
+            continue;
+        }
+        saved_node->state.life = life_point;
+        printf("The life-point has been set to %d.\n", saved_node->state.life);
         return;
     }
-    saved_node->state.life = life_point;
-    printf("The life-point has been set to %d.\n", saved_node->state.life);
 }
 
 void modify_coin(SaveNode *saved_node){
     int coins;
 
-    printf("\nEnter the amount of coins: ");
-    scanf("%d", &coins);
-    clean_input();
+    while (1){
 
-    if (coins < 0){
-        printf("%d is not a valid coin!\n", coins);
+        printf("\nEnter the amount of coins: ");
+        if (scanf("%d", &coins) != 1){
+            printf("\n\033[31mInvalid input!\033[0m\n");
+            clean_input();
+            continue;
+        }
+
+        clean_input();
+
+        if (coins < 0){
+            printf("%d is not a valid coin!\n", coins);
+            continue;
+        }
+        saved_node->state.coins = coins;
+        printf("The amount of coins has been set to %d.\n", saved_node->state.coins);
         return;
     }
-    saved_node->state.coins = coins;
-    printf("The amount of coins has been set to %d.\n", saved_node->state.coins);
 }
 
 void modify_key(SaveNode *saved_node){
