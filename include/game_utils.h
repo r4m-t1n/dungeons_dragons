@@ -9,6 +9,7 @@
 #define CL_GREEN	"\x1B[32m"
 #define CL_YELLOW	"\x1B[33m"
 #define CL_BLUE		"\x1B[34m"
+#define CL_BOLD		"\x1B[1m"
 
 int print_saved_games(void);
 SaveNode *search_game(int num);

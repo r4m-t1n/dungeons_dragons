@@ -348,8 +348,9 @@ MissionState mission_menu_handler(GameState *game, char option){
 MissionState mission_rotting_swamp(GameState *game){
 
     printf(
-        "\n\033[1m=== ROTTING SWAMP ===\033[0m\n"
-        "Goals: Defeat 3 Orc Generals of the Dark Lord\n"
+        "\n%s=== ROTTING SWAMP ===%s\n"
+        "Goals: Defeat 3 Orc Generals of the Dark Lord\n",
+        CL_BOLD, CL_CLOSE
     );
 
     int non_generals = 0;
@@ -358,7 +359,7 @@ MissionState mission_rotting_swamp(GameState *game){
 
     while (rooms_visited < 10) {
         printf(
-            "\n\nMission Status: Defeated %d of 3 Orc Generals.\n",
+            "Mission Status: Defeated %d of 3 Orc Generals.\n",
             defeated_orc_generals
         );
 
@@ -405,8 +406,9 @@ MissionState mission_rotting_swamp(GameState *game){
 MissionState mission_haunted_mansion(GameState *game){
     
     printf(
-        "\n\033[1m=== HAUNTED MANSION ===\033[0m\n"
-        "Recover the key to the Dark Lord's Castle, and defeat a Greater Vampire.\n"
+        "\n%s=== HAUNTED MANSION ===%s\n"
+        "Recover the key to the Dark Lord's Castle, and defeat a Greater Vampire.\n",
+        CL_BOLD, CL_CLOSE
     );
 
     bool has_vampire = false;
@@ -476,8 +478,9 @@ MissionState mission_haunted_mansion(GameState *game){
 MissionState mission_crystal_cave(GameState *game){
     
     printf(
-        "\n\033[1m=== Crystal Cave ===\033[0m\n"
-        "Recover the Hero's sword.\n"
+        "\n%s=== Crystal Cave ===%s\n"
+        "Recover the Hero's sword.\n",
+        CL_BOLD, CL_CLOSE
     );
 
     int non_dragons = 0;
@@ -576,9 +579,9 @@ int random_enemy_crystal_cave(int *non_dragons){
 MissionState fight_enemy(GameState *game, Enemy *enemy){
     
     printf(
-        "\nThe hero encounters an enemy: \033[1m%s\033[0m"
+        "\nThe hero encounters an enemy: %s%s%s"
         "\nthe fight begins.\n",
-        enemy->name
+        CL_BOLD, enemy->name, CL_CLOSE
     );
     
     while (1){
@@ -608,8 +611,8 @@ MissionState fight_enemy(GameState *game, Enemy *enemy){
             printf(
                 "BEFORE I DEAL 10 DAMAGE TO YOU, I'LL GIVE YOU A CHANCE TO TELL ME IF THIS NUMBER IS FROM PADOVAN SEQUENCE!\n"
                 "The number: %d\n"
-                "\033[1m[Yes/No]\033[0m\n",
-                random_number
+                "%s[Yes/No]%s\n",
+                random_number, CL_BOLD, CL_CLOSE
             );
 
             char user_input[4];
@@ -656,8 +659,8 @@ MissionState get_state(GameState *game){
 
 MissionState trap_room_handler(GameState *game, Enemy *enemy){
     printf(
-        "\nThe hero encounters a trap: \033[1m%s\033[0m\n",
-        enemy->name
+        "\nThe hero encounters a trap: %s%s%s\n",
+        CL_BOLD, enemy->name, CL_CLOSE
     );
     if (enemy->damage != 0){
         game->life -= (enemy->damage - game->extra_armor);

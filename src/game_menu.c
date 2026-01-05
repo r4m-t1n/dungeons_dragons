@@ -103,9 +103,7 @@ void delete_game(SaveNode **head, SaveNode *saved_game){
     char user_input[4];
     
     while (1){
-        printf(
-            "Are you sure you want to permanently delete the save? \033[1m[Yes/No]\033[0m\n"
-        );
+        printf("Are you sure you want to permanently delete the save? %s[Yes/No]%s\n", CL_BOLD, CL_CLOSE);
         scanf("%3s", user_input);
         clean_input();
 
@@ -155,7 +153,7 @@ void start_game(GameState *game){
         clean_input();
 
         if (buffer[1] != '\0' || buffer[0] < '1' || buffer[0] > '5') {
-            printf("\n%sInvalid option!%s\n", CL_RED, CL_CLOSE);
+            printf("\n%sInvalid input!%s\n", CL_RED, CL_CLOSE);
             continue;
         }
 
@@ -202,12 +200,13 @@ void quick_rest(GameState *game){
         printf("\n\033[32mLife Points Restored to 20!\033[0m\n");
         sleep(1);
     } else{
-        printf("\n%sYour life points are full!%s\n\n", CL_BLUE, CL_CLOSE);
+        printf("\n%sYour life points are full!%s\n", CL_BLUE, CL_CLOSE);
     }
     return;
 }
 
 void display_inventory(GameState *game){
+    //Replace bold
     printf(
         "\nYour Stats:"
             "\n\t\033[1mLife Points: %d\033[0m"
@@ -244,10 +243,10 @@ void save_game(GameState *current_game) {
 }
 
 int exit_game(GameState *game){
-    printf("You are exiting the game, remember to \033[1msave\033[0m the game so as not to lose your progress.");
+    printf("You are exiting the game, remember to %ssave%s the game so as not to lose your progress.", CL_BOLD, CL_CLOSE);
     char user_input[4];
     while (1){
-        printf("\nAre you sure to proceed? \033[1m[Yes/No]\033[0m\n");
+        printf("\nAre you sure to proceed? %s[Yes/No]%s\n", CL_BOLD, CL_CLOSE);
         scanf("%3s", user_input);
         clean_input();
         
