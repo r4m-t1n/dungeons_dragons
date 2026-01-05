@@ -153,7 +153,7 @@ void start_game(GameState *game){
         clean_input();
 
         if (buffer[1] != '\0' || buffer[0] < '1' || buffer[0] > '5') {
-            printf("\n%sInvalid input!%s\n", CL_RED, CL_CLOSE);
+            printf("\n%sInvalid input! Try again!%s\n", CL_RED, CL_CLOSE);
             continue;
         }
 
@@ -179,7 +179,7 @@ void start_game(GameState *game){
             }
             break;
         default:
-            printf("\n%sInvalid input. Trye again!%s\n", CL_RED, CL_CLOSE);
+            printf("\n%sInvalid input! Try again.%s\n", CL_RED, CL_CLOSE);
             break;
         }
     }
