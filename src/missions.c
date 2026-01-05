@@ -178,7 +178,7 @@ void enter_shop(GameState *game){
             return;
         case '2':
             if (game->extra_sword != 0){
-               printf("\n\n\033[34mYou already have the extra sword damage!\033[0m\n"); 
+               printf("\n\n%sYou already have the extra sword damage!%s\n", CL_BLUE, CL_CLOSE); 
                break;
             }
             if (game->coins - 5 >= 0){
@@ -194,7 +194,7 @@ void enter_shop(GameState *game){
             return;
         case '3':
             if (game->extra_armor != 0){
-               printf("\n\n\033[34mYou already have the extra armor!\033[0m\n");
+               printf("\n\n%sYou already have the extra armor!%s\n", CL_BLUE, CL_CLOSE);
                break;
             }
             if (game->coins - 10 >= 0){

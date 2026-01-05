@@ -135,26 +135,31 @@ void delete_game(SaveNode **head, SaveNode *saved_game){
     }
 }
 
-
-void display_village_menu(){
-    printf(
-        "\nVillage Menu :\n\n"
-            "\t1. Start a mission\n"
-            "\t2. Rest\n"
-            "\t3. Inventory\n"
-            "\t4. Save the game\n"
-            "\t5. Exit\n\n"
-        "Choose an action [1-5]: "
-    );
-}
-
 void start_game(GameState *game){
     while (1) {
-        display_village_menu();
+        printf(
+            "\nVillage Menu :\n\n"
+                "\t1. Start a mission\n"
+                "\t2. Rest\n"
+                "\t3. Inventory\n"
+                "\t4. Save the game\n"
+                "\t5. Exit\n\n"
+            "Choose an action [1-5]: "
+        );
 
-        char user_input;
-        scanf(" %c", &user_input);
+        char buffer[16];
+        if (scanf("%15s", buffer) != 1) {
+            clean_input();
+            continue;
+        }
         clean_input();
+
+        if (buffer[1] != '\0' || buffer[0] < '1' || buffer[0] > '5') {
+            printf("\n%sInvalid option!%s\n", CL_RED, CL_CLOSE);
+            continue;
+        }
+
+        char user_input = buffer[0];
 
         switch (user_input)
         {
@@ -171,9 +176,12 @@ void start_game(GameState *game){
             save_game(game);
             break;
         case '5':
-            exit_game(game);
-            return;
+            if (exit_game(game)){
+                return;
+            }
+            break;
         default:
+            printf("\n%sInvalid input. Trye again!%s\n", CL_RED, CL_CLOSE);
             break;
         }
     }
@@ -194,7 +202,7 @@ void quick_rest(GameState *game){
         printf("\n\033[32mLife Points Restored to 20!\033[0m\n");
         sleep(1);
     } else{
-        printf("\n\033[34mYour life points are full!\033[0m\n\n");
+        printf("\n%sYour life points are full!%s\n\n", CL_BLUE, CL_CLOSE);
     }
     return;
 }
@@ -235,7 +243,7 @@ void save_game(GameState *current_game) {
     return;
 }
 
-void exit_game(GameState *game){
+int exit_game(GameState *game){
     printf("You are exiting the game, remember to \033[1msave\033[0m the game so as not to lose your progress.");
     char user_input[4];
     while (1){
@@ -245,9 +253,9 @@ void exit_game(GameState *game){
         
         if (strcasecmp(user_input, "Yes")==0 || strcasecmp(user_input, "Y")==0){
             free(game);
-            return;
+            return 1;
         } else if (strcasecmp(user_input, "No")==0 || strcasecmp(user_input, "N")==0){
-            return;
+            return 0;
         } else {
             printf("\n\033[31mInvalid input.\033[0m\n");
             continue;
