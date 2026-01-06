@@ -156,9 +156,20 @@ void enter_shop(GameState *game){
                 "----------------------------------------------------------------------------------------------------\n"
                 "\nChoose an item to purchase [1-3]: "
         );
-        char user_input;
-        scanf(" %c", &user_input);
+
+        char buffer[16];
+        if (scanf("%15s", buffer) != 1) {
+            clean_input();
+            continue;
+        }
         clean_input();
+
+        if (buffer[1] != '\0') {
+            printf("\n%sInvalid input! Try again!%s\n", CL_RED, CL_CLOSE);
+            continue;
+        }
+
+        char user_input = buffer[0];
 
         switch (user_input)
         {
@@ -166,14 +177,14 @@ void enter_shop(GameState *game){
             if (game->coins - 4 >= 0){
                 game->coins -= 4;
                 printf(
-                    "\n\n\033[32msuccessfully purchased!\033[0m\nYou now have %d Health Potions.\n",
-                    ++game->potions
+                    "\n\n%ssuccessfully purchased!%s\nYou now have %d Health Potions.\n",
+                    CL_GREEN, CL_CLOSE, ++game->potions
                 );
                 break;
             }
             printf(
-                "\n\n\033[31mInsufficient coins!\033[0m\n Your balance: %d coins.\n",
-                game->coins
+                "\n\n%sInsufficient coins!%s\n Your balance: %d coins.\n",
+                CL_RED, CL_CLOSE, game->coins
             );
             return;
         case '2':
@@ -184,12 +195,12 @@ void enter_shop(GameState *game){
             if (game->coins - 5 >= 0){
                 game->coins -= 5;
                 game->extra_sword = 1;
-                printf("\n\n\033[32msuccessfully purchased!\033[0m\nYour sword now has +1 damage.\n");
+                printf("\n\n%ssuccessfully purchased!%s\nYour sword now has +1 damage.\n", CL_GREEN, CL_CLOSE);
                 break;
             }
             printf(
-                "\n\n\033[31mInsufficient coins!\033[0m\n Your balance: %d coins.\n",
-                game->coins
+                "\n\n%sInsufficient coins!%s\n Your balance: %d coins.\n",
+                CL_RED, CL_CLOSE, game->coins
             );
             return;
         case '3':
@@ -200,12 +211,12 @@ void enter_shop(GameState *game){
             if (game->coins - 10 >= 0){
                 game->coins -= 10;
                 game->extra_armor = 1;
-                printf("\n\n\033[32msuccessfully purchased!\033[0m\nYou now receive 1 less damage.\n");
+                printf("\n\n%ssuccessfully purchased!%s\nYou now receive 1 less damage.\n", CL_GREEN, CL_CLOSE);
                 break;
             }
             printf(
-                "\n\n\033[31mInsufficient coins!\033[0m\n Your balance: %d coins.\n",
-                game->coins
+                "\n\n%sInsufficient coins!%s\n Your balance: %d coins.\n",
+                CL_RED, CL_CLOSE, game->coins
             );
             return;
         case 'b':
@@ -261,9 +272,19 @@ MissionState select_mission(GameState *game){
     while (1) {
         display_mission_menu(game, mission_linker);
         
-        char user_input;
-        scanf(" %c", &user_input);
+        char buffer[16];
+        if (scanf("%15s", buffer) != 1) {
+            clean_input();
+            continue;
+        }
         clean_input();
+
+        if (buffer[1] != '\0' ) {
+            printf("\n%sInvalid input! Try again!%s\n", CL_RED, CL_CLOSE);
+            continue;
+        }
+
+        char user_input = buffer[0];
 
         if (user_input == 'b'){
             return BACK;
@@ -313,9 +334,9 @@ MissionState mission_menu_handler(GameState *game, char option){
                 int rolled_dice = roll_dice();
                 game->life = (rolled_dice+game->life) > 20 ? 20 : rolled_dice+game->life;
                 printf(
-                    "\nYou used your health potions and \033[32mhealed +%d\033[0m.\n"
+                    "\nYou used your health potions and %shealed +%d%s.\n"
                     "Your current life points: %d\n",
-                    rolled_dice, game->life
+                    CL_GREEN, rolled_dice, CL_CLOSE, game->life
                 );
             } else {
                 printf("\nYou don't have any health potions!\n");
@@ -331,15 +352,15 @@ MissionState mission_menu_handler(GameState *game, char option){
         case '4':
             if (game->coins >= 50){
                 game->coins -= 50;
-                printf("\n\033[33mYou paid 50 coins to return to the village.\033[0m\n\n");
+                printf("\n%sYou paid 50 coins to return to the village.%s\n\n", CL_YELLOW, CL_CLOSE);
                 sleep(1);
                 return WON;
             } else {
-                printf("\n\033[31mYou need 50 coins to return to the village! You have %d coins.\033[0m\n", game->coins);
+                printf("\n%sYou need 50 coins to return to the village! You have %d coins.%s\n", CL_RED, game->coins, CL_CLOSE);
             }
             break;
         default:
-            printf("\n\033[31mInvalid option!\033[0m\n");
+            printf("\n%sInvalid option!%s\n", CL_RED, CL_CLOSE);
             break;
     }
     return BACK;
@@ -372,7 +393,7 @@ MissionState mission_rotting_swamp(GameState *game){
         clean_input();
 
         if (!is_digit(user_input)){
-            printf("\n\033[31mInvalid option!\033[0m\n");
+            printf("\n%sInvalid option!%s\n"CL_RED, CL_CLOSE);
             continue;
         }
 
@@ -394,8 +415,9 @@ MissionState mission_rotting_swamp(GameState *game){
     }
 
     printf(
-        "\n\033[32mYou successfully completed the Rotting Swamp Mission!\033[0m\n"
-        "Returning back to main menu...\n"
+        "\n%sYou successfully completed the Rotting Swamp Mission!%s\n"
+        "Returning back to main menu...\n",
+        CL_GREEN, CL_CLOSE
     );
     game->completed_m[0] = 1;
 
@@ -437,14 +459,19 @@ MissionState mission_haunted_mansion(GameState *game){
         
         display_mission_progression();
         
-        char user_input;
-        scanf(" %c", &user_input);
-        clean_input();
-
-        if (!is_digit(user_input)){
-            printf("\n\033[31mInvalid option!\033[0m\n");
+        char buffer[16];
+        if (scanf("%15s", buffer) != 1) {
+            clean_input();
             continue;
         }
+        clean_input();
+
+        if (buffer[1] != '\0' || !is_digit(buffer[0]) ) {
+            printf("\n%sInvalid input! Try again!%s\n", CL_RED, CL_CLOSE);
+            continue;
+        }
+
+        char user_input = buffer[0];
 
         if (user_input == '1'){
             if (game->life > 0){
@@ -459,15 +486,16 @@ MissionState mission_haunted_mansion(GameState *game){
             if (mission_menu_state == WON){
                 game->completed_m[1] = 1;
                 game->has_key++;
-                printf("\033[32mYou received the key to the Dark Lord's Castle!\033[0m\n");
+                printf("%sYou received the key to the Dark Lord's Castle!%s\n", CL_GREEN, CL_CLOSE);
                 return WON;
             }
         }
     }
     
     printf(
-        "\n\033[32mYou successfully completed the Hanuted Mansion Mission!\033[0m\n"
-        "Returning back to main menu...\n"
+        "\n%sYou successfully completed the Hanuted Mansion Mission!%s\n"
+        "Returning back to main menu...\n",
+        CL_GREEN, CL_CLOSE
     );
     game->completed_m[1] = 1;
 
@@ -504,7 +532,7 @@ MissionState mission_crystal_cave(GameState *game){
         clean_input();
 
         if (!is_digit(user_input)){
-            printf("\n\033[31mInvalid option!\033[0m\n");
+            printf("\n%sInvalid option!%s\n", CL_RED, CL_CLOSE);
             continue;
         }
 
@@ -519,15 +547,16 @@ MissionState mission_crystal_cave(GameState *game){
             if (mission_menu_state == WON){
                 game->completed_m[2] = 1;
                 game->extra_sword = 2;
-                printf("\033[32mYou received the Hero's sword and gained permanent \033[32m+2 attack damage\033[0m!\033[0m\n");
+                printf("%sYou received the Hero's sword and gained permanent %s+2 attack damage%s!%s\n", CL_GREEN, CL_GREEN, CL_CLOSE, CL_CLOSE);
                 return WON;
             }
         }
     }
 
     printf(
-        "\n\033[32mYou successfully completed the Crystal Cave Mission!\033[0m\n"
-        "Returning back to main menu...\n"
+        "\n%sYou successfully completed the Crystal Cave Mission!%s\n"
+        "Returning back to main menu...\n",
+        CL_GREEN, CL_CLOSE
     );
     game->completed_m[2] = 1;
 
@@ -598,8 +627,8 @@ MissionState fight_enemy(GameState *game, Enemy *enemy){
         if (enemy->fatal_strike <= total_damage){
             game->coins += enemy->coins;
             printf(
-                "The %s is defeated. The hero remains with \033[32m%d life points\033[0m, and receives %d coins.\n",
-                enemy->name, game->life, enemy->coins
+                "The %s is defeated. The hero remains with %s%d life points%s, and receives %d coins.\n",
+                enemy->name, CL_GREEN, game->life, CL_CLOSE, enemy->coins
             );
             return WON;
         }
@@ -633,15 +662,15 @@ MissionState fight_enemy(GameState *game, Enemy *enemy){
         
         game->life -= (enemy->damage - game->extra_armor);
         printf(
-            "The %s deals \033[31m%d damage\033[0m to the hero. ",
-            enemy->name, (enemy->damage - game->extra_armor)
+            "The %s deals %s%d damage%s to the hero. ",
+            enemy->name, CL_RED, (enemy->damage - game->extra_armor), CL_CLOSE
         );
         
         if (get_state(game) == LOST) return LOST;
         
         printf(
-            "The hero remains with \033[32m%d life points\033[0m.\n",
-            game->life
+            "The hero remains with %s%d life points%s.\n",
+            CL_GREEN, game->life, CL_CLOSE
         );
     }
 }
@@ -649,8 +678,9 @@ MissionState fight_enemy(GameState *game, Enemy *enemy){
 MissionState get_state(GameState *game){
     if (game->life <= 0){
         printf(
-            "\n\n\033[31mYou have been defeated!\033[0m\n"
-            "Returning back to main menu...\n"
+            "\n\n%sYou have been defeated!%s\n"
+            "Returning back to main menu...\n",
+            CL_RED, CL_CLOSE
         );
         return LOST;
     }
@@ -666,8 +696,8 @@ MissionState trap_room_handler(GameState *game, Enemy *enemy){
         game->life -= (enemy->damage - game->extra_armor);
         printf(
             "You took %d damage! "
-            "The hero remains with \033[32m%d life points\033[0m.\n",
-            (enemy->damage - game->extra_armor), game->life
+            "The hero remains with %s%d life points%s.\n",
+            (enemy->damage - game->extra_armor), CL_GREEN, game->life, CL_CLOSE
         );
     }
     if (enemy->coins > 0){
@@ -735,7 +765,7 @@ MissionState explore_haunted_mansion_room(GameState *game,
         }
         if (*has_demon && !game->has_key){
             game->has_key++;
-            printf("\033[32mYou received the key to the Dark Lord's Castle!\033[0m");
+            printf("%sYou received the key to the Dark Lord's Castle!%s", CL_GREEN, CL_CLOSE);
         }
 
     }
@@ -774,7 +804,7 @@ MissionState explore_crystal_cave_room(GameState *game, int *non_dragons){
         if (enemy->number == 12+6){
             free(enemy);
             game->extra_sword = 2;
-            printf("\033[32mYou received the Hero's sword and gained permanent \033[32m+2 attack damage\033[0m!\033[0m");
+            printf("%sYou received the Hero's sword and gained permanent %s+2 attack damage%s!%s", CL_GREEN, CL_GREEN, CL_CLOSE, CL_CLOSE);
             return WON;
         }
         free(enemy);
@@ -802,7 +832,7 @@ MissionState mission_dark_lord(GameState *game){
         clean_input();
 
         if (user_input != '1' && user_input != '2' && user_input != '3'){
-            printf("\n\033[31mInvalid option!\033[0m\n");
+            printf("\n%sInvalid option!%s\n", CL_RED, CL_CLOSE);
             continue;
         }
 
@@ -830,16 +860,16 @@ MissionState mission_dark_lord(GameState *game){
 
             printf(
                 "The hero couldn't defend himself from the %s of the Dark Lord. "
-                "\033[31mThe hero loses the Round.\033[0m\n",
-                lords_move_name
+                "%sThe hero loses the Round.%s\n",
+                lords_move_name, CL_RED, CL_CLOSE
             );
 
         } else {
 
             printf(
                 "The hero defends himself from the %s of the Dark Lord. "
-                "\033[32mThe hero wins the Round.\033[0m\n",
-                lords_move_name
+                "%sThe hero wins the Round.%s\n",
+                lords_move_name, CL_GREEN, CL_CLOSE
             );
             won_rounds++;
 
@@ -850,8 +880,9 @@ MissionState mission_dark_lord(GameState *game){
             return get_state(game);
         } else if (won_rounds == 3){
             printf(
-                "\n\033[32mVICTORY!!!\033[0m\ncongratulations! You \033[32mWON\033[0m the game!\n"
-                "Returning back to main menu...\n"
+                "\n%sVICTORY!!!%s\ncongratulations! You %sWON%s the game!\n"
+                "Returning back to main menu...\n",
+                CL_GREEN, CL_CLOSE, CL_GREEN, CL_CLOSE
             );
             return WON;
         }

@@ -9,7 +9,7 @@ int print_saved_games(void){
     printf("Saved Games :\n\n");
     SaveNode *current = saved_games;
     if (current == NULL){
-        printf("\033[31mUnfortunately, you don't have any saved game.\033[0m\n");
+        printf("%sUnfortunately, you don't have any saved game.%s\n", CL_RED, CL_CLOSE);
         return 0;
     }
     int c = 0;

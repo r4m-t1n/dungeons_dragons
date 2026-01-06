@@ -46,7 +46,7 @@ void load_game_menu(){
         if (selected_option == 'b'){
             return;
         } else if (!is_digit(selected_option)){
-            printf("\n\033[31mInvalid option!\033[0m\n\n");
+            printf("\n%sInvalid option!%s\n\n", CL_RED, CL_CLOSE);
             continue;
         }
 
@@ -127,7 +127,7 @@ void delete_game(SaveNode **head, SaveNode *saved_game){
         } else if (strcasecmp(user_input, "No")==0 || strcasecmp(user_input, "N")==0){
             return;
         } else {
-            printf("\n\033[31mInvalid input.\033[0m\n");
+            printf("\n%sInvalid input.%s\n", CL_RED, CL_CLOSE);
             continue;
         }
     }
@@ -152,7 +152,7 @@ void start_game(GameState *game){
         }
         clean_input();
 
-        if (buffer[1] != '\0' || buffer[0] < '1' || buffer[0] > '5') {
+        if (buffer[1] != '\0' || !is_digit(buffer[0]) ) {
             printf("\n%sInvalid input! Try again!%s\n", CL_RED, CL_CLOSE);
             continue;
         }
@@ -197,7 +197,7 @@ void quick_rest(GameState *game){
             c++;
         }
         game->life = 20;
-        printf("\n\033[32mLife Points Restored to 20!\033[0m\n");
+        printf("\n%sLife Points Restored to 20!%s\n", CL_GREEN, CL_CLOSE);
         sleep(1);
     } else{
         printf("\n%sYour life points are full!%s\n", CL_BLUE, CL_CLOSE);
@@ -206,7 +206,6 @@ void quick_rest(GameState *game){
 }
 
 void display_inventory(GameState *game){
-    //Replace bold
     printf(
         "\nYour Stats:"
             "\n\t\033[1mLife Points: %d\033[0m"
@@ -224,7 +223,7 @@ void save_game(GameState *current_game) {
 
     SaveNode *new_node = malloc(sizeof(SaveNode));
     if (new_node == NULL) {
-        printf("\033[31mERROR: Can't allocate memory.\033[0m\n");
+        printf("%sERROR: Can't allocate memory.%s\n", CL_RED, CL_CLOSE);
         return;
     }
     new_node->state = *current_game;
@@ -238,7 +237,7 @@ void save_game(GameState *current_game) {
     else{
         last_node->next = new_node;
     }
-    printf("\n\033[32mGame Saved Successfully!\033[0m\n\n");
+    printf("\n%sGame Saved Successfully!%s\n\n", CL_GREEN, CL_CLOSE);
     return;
 }
 
@@ -256,7 +255,7 @@ int exit_game(GameState *game){
         } else if (strcasecmp(user_input, "No")==0 || strcasecmp(user_input, "N")==0){
             return 0;
         } else {
-            printf("\n\033[31mInvalid input.\033[0m\n");
+            printf("\n%sInvalid input.%s\n", CL_RED, CL_CLOSE);
             continue;
         }
     }

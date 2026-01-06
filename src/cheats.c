@@ -18,7 +18,7 @@ void cheats_menu(){
         if (selected_option == 'b'){
             return;
         } else if (!is_digit(selected_option)){
-            printf("\n\033[31mInvalid input!\033[0m\n");
+            printf("\n%sInvalid input!%s\n", CL_RED, CL_CLOSE);
             continue;
         }
 
@@ -78,7 +78,7 @@ void modify_life(SaveNode *saved_node){
 
         printf("\nEnter the life-points between 1-20: ");
         if (scanf("%d", &life_point) != 1){
-            printf("\n\033[31mInvalid input!\033[0m\n");
+            printf("\n%sInvalid input!%s\n", CL_RED, CL_CLOSE);
             clean_input();
             continue;
         }
@@ -102,7 +102,7 @@ void modify_coin(SaveNode *saved_node){
 
         printf("\nEnter the amount of coins: ");
         if (scanf("%d", &coins) != 1){
-            printf("\n\033[31mInvalid input!\033[0m\n");
+            printf("\n%sInvalid input!%s\n", CL_RED, CL_CLOSE);
             clean_input();
             continue;
         }
