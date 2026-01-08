@@ -31,9 +31,8 @@
 /**
  * @brief Shows all the saved games to the player
  * 
- * This prints a numbered list of saves with info like when it was saved,
+ * Prints a numbered list of saves with info like when it was saved,
  * how much life and coins they have, total items, and completed missions.
- * Returns 0 if there aren't any saves yet.
  * 
  * @return 1 if saves exist, 0 if the save list is empty
  * 
@@ -44,8 +43,6 @@ int print_saved_games(void);
  * @brief Finds a saved game by its number
  * 
  * Goes through the save game list and returns the one matching the number.
- * If pass -1, it gives the last save in the list which is useful
- * when adding new saves.
  * 
  * @param num Which save to find (starts at 1), or -1 for the last one
  * @return Pointer to that save, or NULL if it doesn't exist
