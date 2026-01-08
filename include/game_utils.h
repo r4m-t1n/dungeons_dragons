@@ -1,7 +1,6 @@
 /**
  * @file game_utils.h
- * @brief Utility stuff for the game - colors, input handling, save game functions
- * 
+ * Utility stuff for the game: colors, input handling, save game functions
  */
 
 #ifndef GAME_UTILS_H
@@ -10,37 +9,30 @@
 #include <time.h>
 #include "games.h"
 
-/** Resets color back to normal */
-#define CL_CLOSE "\x1B[0m"
+#define CL_CLOSE "\x1B[0m" /**< Resets color back to normal */
 
-/** Red text */
-#define CL_RED "\x1B[31m"
+#define CL_RED "\x1B[31m" /**< Red text */
 
-/** Green text */
-#define CL_GREEN "\x1B[32m"
+#define CL_GREEN "\x1B[32m" /**< Green text */
 
-/** Yellow text */
-#define CL_YELLOW "\x1B[33m"
+#define CL_YELLOW "\x1B[33m" /**< Yellow text */
 
-/** Blue text */
-#define CL_BLUE "\x1B[34m"
+#define CL_BLUE "\x1B[34m" /**< Blue text */
 
-/** Bold text */
-#define CL_BOLD "\x1B[1m"
+#define CL_BOLD "\x1B[1m" /**< Bold text */
 
 /**
- * @brief Shows all the saved games to the player
+ * Shows all the saved games to the player
  * 
  * Prints a numbered list of saves with info like when it was saved,
  * how much life and coins they have, total items, and completed missions.
  * 
  * @return 1 if saves exist, 0 if the save list is empty
- * 
  */
 int print_saved_games(void);
 
 /**
- * @brief Finds a saved game by its number
+ * Finds a saved game by its number
  * 
  * Goes through the save game list and returns the one matching the number.
  * 
@@ -50,7 +42,7 @@ int print_saved_games(void);
 SaveNode *search_game(int num);
 
 /**
- * @brief Adds up the player's inventory items
+ * Adds up the player's inventory items
  * 
  * Counts potions + extra swords + extra armor to get total items.
  * 
@@ -60,7 +52,7 @@ SaveNode *search_game(int num);
 int total_items(GameState *game);
 
 /**
- * @brief Clears leftover input from the buffer
+ * Clears leftover input from the buffer
  * 
  * scanf leaves junk in the input buffer (especially newlines) so this
  * function just reads and throws away everything until the next line.
@@ -69,7 +61,7 @@ int total_items(GameState *game);
 void clean_input();
 
 /**
- * @brief Checks if a character is a number
+ * Checks if a character is a number
  * 
  * Returns 1 if the character is between '0' and '9', otherwise 0.
  * 
