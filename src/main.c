@@ -8,6 +8,14 @@
 
 SaveNode *saved_games = NULL;
 
+/**
+ * Print the main menu
+ * 
+ * Show either 2 or 3 options depending on cheats are enabled or not. If cheats
+ * are enabled, the cheat menu option appears.
+ * 
+ * @param cheats_enabled Whether to show the cheats option (0 or 1)
+ */
 void print_menu(int cheats_enabled){
     if (cheats_enabled){
         printf(
