@@ -47,10 +47,26 @@ int roll_dice() {
     return (rand() % 6) + 1;
 }
 
+/**
+ * Flips a coin
+ * 
+ * Returns either 0 or 1 randomly. Used for the Mysterious Chest trap where user
+ * get coins or take damage.
+ * 
+ * @return 0 or 1
+ */
 int flip_coin() {
     return rand() % 2;
 }
 
+/**
+ * Generates a random number between 1 and 500
+ * 
+ * Used for the Dragon's Padovan sequence challenge. The dragon asks if a number
+ * is in the Padovan sequence and user has to answer correctly to avoid damage.
+ * 
+ * @return Random integer from 1 to 500
+ */
 int random_500_generator() {
     return (rand() % 500) + 1;
 }
@@ -59,6 +75,13 @@ FinalFightMoves shield_magic_sword(){
     return (rand() % 3);
 }
 
+/**
+ * Calculates a number in the Padovan sequence
+ * Recursive function that computes the nth Padovan number.
+ * 
+ * @param n Which position in the sequence to calculate
+ * @return The Padovan number at position n
+ */
 int padovan_sequence(int n){
     if (n==0 || n==1 || n==2){
         return 1;
@@ -66,6 +89,15 @@ int padovan_sequence(int n){
     return padovan_sequence(n-2) + padovan_sequence(n-3);
 }
 
+/**
+ * Checks if a number is in the Padovan sequence
+ * 
+ * Generates Padovan numbers until it finds a match or passes the target.
+ * Used for the Dragon's math quiz during combat.
+ * 
+ * @param num The number to check
+ * @return true if num is a Padovan number, false otherwise
+ */
 int is_padovan(int num){
     int n = 1;
     while (1){
@@ -81,6 +113,13 @@ int is_padovan(int num){
     }
 }
 
+/**
+ * Converts a move enum to its string name
+ * Takes a FinalFightMoves value and returns the display name for it.
+ * 
+ * @param num The move enum value
+ * @return String name, "Shield", "Magic", or "Sword"
+ */
 char *name_of_move(FinalFightMoves num){
     switch (num){
         case SHIELD:
@@ -97,7 +136,19 @@ char *name_of_move(FinalFightMoves num){
     }
 }
 
-
+/**
+ * Creates an Enemy struct with data from a specific room
+ * 
+ * Allocates memory and fills in enemy stats based on room number and mission.
+ * Handles special damage codes like -100 (dice roll) and -200 (coin flip).
+ * The fatal strike for traps with -100 damage gets set to 5 if user has the
+ * sword upgrade, otherwise stays -100.
+ * 
+ * @param game Pointer to current game state
+ * @param room_number Which room (1-6 within the mission)
+ * @param mission Which mission (1-3 for the main missions)
+ * @return Pointer to newly created Enemy, or NULL if allocation failed
+ */
 Enemy *initialize_enemy(GameState *game, int room_number, unsigned int mission){
     Enemy *enemy = malloc(sizeof(Enemy));
     if (enemy == NULL){
@@ -227,6 +278,17 @@ void enter_shop(GameState *game){
     }
 }
 
+/**
+ * @brief Show which missions are available
+ * 
+ * Displays missions based on what's been completed. If user has been beaten all three
+ * main missions and have the key, only show the Dark Lord fight. Otherwise show
+ * the uncompleted missions. Update the mission_linker array to map menu choices
+ * to actual mission numbers.
+ * 
+ * @param game Pointer to game state
+ * @param mission_linker Array that maps menu numbers to mission IDs
+ */
 void display_mission_menu(GameState *game, int *mission_linker){
     printf("\nMission Selection Menu:\n\n");
 
@@ -315,6 +377,9 @@ MissionState select_mission(GameState *game){
     }
 }
 
+/**
+ * Shows the menu in mission page
+ */
 void display_mission_progression(){
     printf(
         "Mission Menu :\n\n"
@@ -326,6 +391,17 @@ void display_mission_progression(){
     );
 }
 
+/**
+ * Handles menu options during missions
+ * 
+ * Option 0 uses a health potion, option 2 enter shop,
+ * option 3 display inventory, and 
+ * option 4 check for coins and return to village or disply error.
+ * 
+ * @param game Pointer to game state
+ * @param option The menu choice character
+ * @return WON if returning to village, BACK otherwise
+ */
 MissionState mission_menu_handler(GameState *game, char option){
     switch (option){
         case '0':
@@ -424,7 +500,6 @@ MissionState mission_rotting_swamp(GameState *game){
     return WON;
 }
 
-
 MissionState mission_haunted_mansion(GameState *game){
     
     printf(
@@ -502,7 +577,6 @@ MissionState mission_haunted_mansion(GameState *game){
     return WON;
 }
 
-
 MissionState mission_crystal_cave(GameState *game){
     
     printf(
@@ -563,6 +637,16 @@ MissionState mission_crystal_cave(GameState *game){
     return WON;
 }
 
+/**
+ * Pick a random room for Rotting Swamp
+ * 
+ * Randomly select from rooms 1-6 until user has visited 7 non-general rooms.
+ * After that, forces room 6 (Orc General) to appear. This ensures user can
+ * actually complete the mission.
+ * 
+ * @param non_generals Pointer to counter tracking non-general rooms visited
+ * @return Room number to encounter
+ */
 int random_enemy_rotting_swamp(int *non_generals){
     int chosen_room;
     int enemy_slots = 10 - (*non_generals);
@@ -575,6 +659,18 @@ int random_enemy_rotting_swamp(int *non_generals){
     return chosen_room;
 }
 
+/**
+ * Picks a random room for Haunted Mansion
+ * 
+ * Select from rooms 7-12 randomly. Tracks whether user has fought the vampire
+ * and demon. When user has running out of rooms, forces the remaining bosses to
+ * appear so user can complete the mission.
+ * 
+ * @param enemy_slots Pointer to remaining room slots
+ * @param has_vampire Pointer to vampire defeated flag
+ * @param has_demon Pointer to demon defeated flag
+ * @return Room number to encounter
+ */
 int random_enemy_haunted_mansion(int *enemy_slots, bool *has_vampire, bool *has_demon){
     int chosen_room = 6+roll_dice();
     if (*enemy_slots == (!*has_vampire) + (!*has_demon)){
@@ -593,6 +689,15 @@ int random_enemy_haunted_mansion(int *enemy_slots, bool *has_vampire, bool *has_
     return chosen_room;
 }
 
+/**
+ * Pick a random room for Crystal Cave
+ * 
+ * Randomly select from rooms 13-18 until user has visited 9 non-dragon rooms.
+ * Then forces room 18 (Ancient Dragon) to appear.
+ * 
+ * @param non_dragons Pointer to counter for non-dragon rooms
+ * @return Room number to encounter
+ */
 int random_enemy_crystal_cave(int *non_dragons){
     int chosen_room;
     int enemy_slots = 10 - (*non_dragons);
@@ -605,6 +710,17 @@ int random_enemy_crystal_cave(int *non_dragons){
     return chosen_room;
 }
 
+/**
+ * Runs a combat encounter
+ * 
+ * Handles the fight loop, player rolls dice, adds sword bonus, checks if enemy
+ * is dead. If not, enemy damages back. For the Ancient Dragon,
+ * adds a Padovan sequence quiz before damage, answer correctly to skip damage.
+ * 
+ * @param game Pointer to game state
+ * @param enemy Pointer to the enemy being fought
+ * @return WON if enemy defeated, LOST if player died
+ */
 MissionState fight_enemy(GameState *game, Enemy *enemy){
     
     printf(
@@ -687,6 +803,16 @@ MissionState get_state(GameState *game){
     return WON;
 }
 
+/**
+ * Handles trap room encounters
+ * 
+ * Processes trap damage and coin changes. Applies damage minus armor bonus,
+ * updates coins, and checks if the player survived.
+ * 
+ * @param game Pointer to game state
+ * @param enemy Pointer to the trap data
+ * @return WON if survived, LOST if died from trap
+ */
 MissionState trap_room_handler(GameState *game, Enemy *enemy){
     printf(
         "\nThe hero encounters a trap: %s%s%s\n",
