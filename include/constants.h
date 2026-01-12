@@ -19,7 +19,7 @@
 #define DEFAULT_KONAMI "wwssadadba " /**< The Konami code sequence - wwssadadba followed by space */
 #define DEFAULT_TIME 0 /**< Starting timestamp - set to 0 until first save */
 #define DEFAULT_LIFE_POINT 20 /**< Starting life points - full health */
-#define DEFAULT_COINS 100 /**< Starting coins */
+#define DEFAULT_COINS 0 /**< Starting coins */
 #define DEFAULT_POTIONS 0 /**< Starting potions */
 #define DEFAULT_EXTRA_SWORD 0 /**< Starting sword bonus */
 #define DEFAULT_EXTRA_ARMOR 0 /**< Starting armor bonus */
