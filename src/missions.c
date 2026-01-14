@@ -3,6 +3,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <string.h>
+#include <strings.h>
 #include <stdbool.h>
 #include "games.h"
 #include "constants.h"
@@ -297,7 +298,7 @@ void display_mission_menu(GameState *game, int *mission_linker){
     if (game->has_key && game->completed_m[0] && game->completed_m[2]){
         printf(
             "1. Dark Lord's Castle - Final Mission: Defeat the Dark Lord.\n"
-            "Choose an action [1-1]: "
+            "\nChoose an action [1-1]: "
         );
         mission_linker[0] = 4;
         return;
@@ -942,6 +943,7 @@ MissionState explore_crystal_cave_room(GameState *game, int *non_dragons){
 
 MissionState mission_dark_lord(GameState *game){
     int won_rounds = 0;
+    int dark_lord_won = 0;
     int current_round = 1;
     while (1){
         printf(
@@ -951,7 +953,7 @@ MissionState mission_dark_lord(GameState *game){
                 "\t2. Magic\n"
                 "\t3. Sword\n"
             "\nSelect one of the menu options [1-3]: ",
-            current_round, won_rounds, current_round - won_rounds
+            current_round, won_rounds, dark_lord_won
         );
 
         char user_input;
@@ -963,16 +965,29 @@ MissionState mission_dark_lord(GameState *game){
             continue;
         }
 
+        FinalFightMoves user_move;
+        switch (user_input){
+            case '1':
+                user_move = SHIELD;
+                break;
+            case '2':
+                user_move = MAGIC;
+                break;
+            case '3':
+                user_move = SWORD;
+                break;
+        }
+
         FinalFightMoves random_chosen = shield_magic_sword();
-        char lords_move_name[10];
-        strcpy(lords_move_name, name_of_move(random_chosen));
+        const char* lords_move_name = name_of_move(random_chosen);
 
         printf(
-            "The Dark Lord has meanwhile chosen the %s .\n",
+            "The Dark Lord has meanwhile chosen the %s.\n",
             lords_move_name
         );
 
-        if (user_input == random_chosen){
+
+        if (user_move == random_chosen){
 
             printf(
                 "%s against %s!\nRound draw!\n\n",
@@ -981,15 +996,16 @@ MissionState mission_dark_lord(GameState *game){
             continue;
 
         } else if (
-            (user_input == SHIELD && random_chosen == MAGIC) ||
-            (user_input == MAGIC && random_chosen == SWORD) ||
-            (user_input == SWORD && random_chosen == SHIELD)){
+            (user_move == SHIELD && random_chosen == MAGIC) ||
+            (user_move == MAGIC && random_chosen == SWORD) ||
+            (user_move == SWORD && random_chosen == SHIELD)){
 
             printf(
                 "The hero couldn't defend himself from the %s of the Dark Lord. "
                 "%sThe hero loses the Round.%s\n",
                 lords_move_name, CL_RED, CL_CLOSE
             );
+            dark_lord_won++;
 
         } else {
 
@@ -1002,7 +1018,7 @@ MissionState mission_dark_lord(GameState *game){
 
         }
 
-        if (current_round-won_rounds>2){
+        if (dark_lord_won>2){
             game->life = 0;
             return get_state(game);
         } else if (won_rounds == 3){
