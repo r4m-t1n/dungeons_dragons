@@ -415,7 +415,7 @@ MissionState mission_menu_handler(GameState *game, char option){
                     CL_GREEN, rolled_dice, CL_CLOSE, game->life
                 );
             } else {
-                printf("\nYou don't have any health potions!\n");
+                printf("\n%sYou don't have any health potions!%s\n", CL_RED, CL_CLOSE);
             }
             break;
         case '2':
@@ -469,7 +469,7 @@ MissionState mission_rotting_swamp(GameState *game){
         clean_input();
 
         if (!is_digit(user_input)){
-            printf("\n%sInvalid option!%s\n"CL_RED, CL_CLOSE);
+            printf("\n%sInvalid option!%s\n", CL_RED, CL_CLOSE);
             continue;
         }
 
@@ -614,6 +614,16 @@ MissionState mission_crystal_cave(GameState *game){
             if (game->life > 0){
                 MissionState state = explore_crystal_cave_room(game, &non_dragons);
                 if (state == LOST) return LOST;
+                else if (state == WON){                
+                    printf(
+                        "\n%sYou successfully completed the Crystal Cave Mission!%s\n"
+                        "Returning back to main menu...\n",
+                        CL_GREEN, CL_CLOSE
+                    );
+                    game->completed_m[2] = 1;
+
+                    return WON;
+                }
                 rooms_visited++;
             }
         } else {
@@ -626,15 +636,6 @@ MissionState mission_crystal_cave(GameState *game){
             }
         }
     }
-
-    printf(
-        "\n%sYou successfully completed the Crystal Cave Mission!%s\n"
-        "Returning back to main menu...\n",
-        CL_GREEN, CL_CLOSE
-    );
-    game->completed_m[2] = 1;
-
-    return WON;
 }
 
 /**
@@ -930,7 +931,7 @@ MissionState explore_crystal_cave_room(GameState *game, int *non_dragons){
         if (enemy->number == 12+6){
             free(enemy);
             game->extra_sword = 2;
-            printf("%sYou received the Hero's sword and gained permanent %s+2 attack damage%s!%s", CL_GREEN, CL_GREEN, CL_CLOSE, CL_CLOSE);
+            printf("%sYou received the Hero's sword and gained permanent +2 attack damage!%s", CL_GREEN, CL_CLOSE);
             return WON;
         }
         free(enemy);
