@@ -569,7 +569,7 @@ MissionState mission_haunted_mansion(GameState *game){
     }
     
     printf(
-        "\n%sYou successfully completed the Hanuted Mansion Mission!%s\n"
+        "\n%sYou successfully completed the Haunted Mansion Mission!%s\n"
         "Returning back to main menu...\n",
         CL_GREEN, CL_CLOSE
     );
@@ -593,6 +593,12 @@ MissionState mission_crystal_cave(GameState *game){
         char text[80] = "\n\nMission Status:\n";
 
         if (rooms_visited != non_dragons){
+            // I thought it might confuse the reader;
+            // it means if the number of non-dragon rooms is
+            // not equal to the number of all rooms, then we certainly
+            // visited the dragon room, that is either we lost to it
+            // or won it, and because of that we will break to be sure
+            // we will not face any other loop cycle :)
             break;
         } else {
             strcat(text, "Not recovered the Hero's sword.\n");
@@ -632,7 +638,7 @@ MissionState mission_crystal_cave(GameState *game){
             if (mission_menu_state == WON){
                 game->completed_m[2] = 1;
                 game->extra_sword = 2;
-                printf("%sYou received the Hero's sword and gained permanent %s+2 attack damage%s!%s\n", CL_GREEN, CL_GREEN, CL_CLOSE, CL_CLOSE);
+                printf("%sYou received the Hero's sword and gained permanent %s+2 attack damage!%s\n", CL_GREEN, CL_GREEN, CL_CLOSE);
                 return WON;
             }
         }
