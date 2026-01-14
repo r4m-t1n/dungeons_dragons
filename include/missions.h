@@ -45,9 +45,9 @@ typedef enum{
  * can compare directly with input.
  */
 typedef enum{
-    SHIELD = '1', /**< Defensive move */
-    MAGIC = '2', /**< Magic attack */
-    SWORD = '3' /**< Physical attack */
+    SHIELD, /**< Defensive move */
+    MAGIC, /**< Magic attack */
+    SWORD /**< Physical attack */
 } FinalFightMoves;
 
 /**
