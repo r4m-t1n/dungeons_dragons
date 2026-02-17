@@ -775,8 +775,11 @@ MissionState fight_enemy(GameState *game, Enemy *enemy){
 
 
             if (
-                (strcasecmp(user_input, "Yes")==0 || strcasecmp(user_input, "Y")==0)
-                && is_padovan(random_number) ){
+                ((strcasecmp(user_input, "Yes")==0 || strcasecmp(user_input, "Y")==0)
+                && is_padovan(random_number))
+                ||
+                ((strcasecmp(user_input, "No")==0 || strcasecmp(user_input, "N")==0)
+                && !is_padovan(random_number)) ){
                 printf("CORRECT! I DEAL YOU NO DAMAGE THIS TIME...\n");
                 continue;
             } else {
