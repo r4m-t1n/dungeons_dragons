@@ -206,6 +206,7 @@ void enter_shop(GameState *game){
                 "| 2 |      Sword     | +1 to the hero attack (permanent, purchasable only once) |         5        |\n"
                 "| 3 |      Armor     | -1 from enemy damage (permanent, purchasable only once)  |         10       |\n"
                 "----------------------------------------------------------------------------------------------------\n"
+                "\nEnter 'b' to back to the previous menu."
                 "\nChoose an item to purchase [1-3]: "
         );
 
@@ -298,6 +299,7 @@ void display_mission_menu(GameState *game, int *mission_linker){
     if (game->has_key && game->completed_m[0] && game->completed_m[2]){
         printf(
             "1. Dark Lord's Castle - Final Mission: Defeat the Dark Lord.\n"
+            "\nEnter 'b' to back to the previous menu."
             "\nChoose an action [1-1]: "
         );
         mission_linker[0] = 4;
@@ -325,7 +327,9 @@ void display_mission_menu(GameState *game, int *mission_linker){
             }
         }
     }
-    printf("\nChoose an action [1-%d]: ", counter);
+    printf(
+        "\nEnter 'b' to back to the previous menu."
+        "\nChoose an action [1-%d]: ", counter);
 
 }
 
