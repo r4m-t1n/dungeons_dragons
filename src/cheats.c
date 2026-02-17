@@ -38,7 +38,8 @@ void cheats_menu(){
                     "\t1. Modify L . POINTS              | Current = %d\n"
                     "\t2. Modify COINS                   | Current = %d\n"
                     "\t3. Enable/disable Final mission   | Current = %s\n\n"
-                "Choose an option [1-3]: "
+                "\nEnter 'b' to back to the previous menu."
+                "\nChoose an option [1-3]: "
                     ,
                     saved_node->state.life, saved_node->state.coins,
                     key_available

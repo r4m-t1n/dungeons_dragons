@@ -63,7 +63,8 @@ void load_game_menu(){
             "Select one of the following actions:\n"
             "\t1. Load\n"
             "\t2. Delete\n"
-            "Insert the action [1-2]: "
+            "\nEnter 'b' to back to the previous menu."
+            "\nInsert the action [1-2]: "
         );
 
         char user_input;

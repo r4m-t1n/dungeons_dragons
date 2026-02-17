@@ -31,7 +31,10 @@ int print_saved_games(void){
         );
         current = current->next;
     }
-    printf("\nSelect a game [1-%d]: ", c);
+    printf(
+        "\nEnter 'b' to back to the previous menu."
+        "\nSelect a game [1-%d]: ", c
+    );
     return 1;
 }
 
