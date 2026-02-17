@@ -362,16 +362,16 @@ MissionState select_mission(GameState *game){
         {
         case 1:
             if (mission_rotting_swamp(game) == LOST) return LOST;
-            break;
+            return WON;
         case 2:
             if (mission_haunted_mansion(game) == LOST) return LOST;
-            break;
+            return WON;
         case 3:
             if (mission_crystal_cave(game) == LOST) return LOST;
-            break;
+            return WON;
         case 4:
             if (mission_dark_lord(game) == LOST) return LOST;
-            else return WON;
+            return WON;
         default:
             break;
         }
